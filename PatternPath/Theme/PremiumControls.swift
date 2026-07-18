@@ -129,7 +129,7 @@ struct FocusBadge: View {
 
     var body: some View {
         HStack(spacing: 8) {
-            Image(systemName: focus == .color ? "paintpalette.fill" : "square.on.circle.fill")
+            Image(systemName: focus == .color ? "paintpalette.fill" : "car.fill")
                 .font(.system(size: 14, weight: .bold))
             Text(focus.prompt)
                 .font(.bodyRounded(17, weight: .bold))
@@ -156,6 +156,7 @@ struct PremiumPressStyle: ButtonStyle {
             .animation(Motion.snappy, value: configuration.isPressed)
             .onChange(of: configuration.isPressed) { _, pressed in
                 if pressed {
+                    HapticsPlayer.shared.warmUp()
                     HapticsPlayer.shared.pressDown()
                 }
             }

@@ -1,15 +1,39 @@
 import SwiftUI
 
-enum TokenShape: String, CaseIterable, Codable, Hashable {
-    case circle
-    case square
-    case triangle
-    case star
-    case hexagon
-    case diamond
+enum ToyKind: String, CaseIterable, Codable, Hashable {
+    case raceCar
+    case fireTruck
+    case policeCar
+    case dumpTruck
+    case carCarrier
+    case robot
+    case ambulance
+    case rocket
 
     var accessibilityName: String {
-        rawValue
+        switch self {
+        case .raceCar: "race car"
+        case .fireTruck: "fire truck"
+        case .policeCar: "police car"
+        case .dumpTruck: "dump truck"
+        case .carCarrier: "car carrier"
+        case .robot: "robot"
+        case .ambulance: "ambulance"
+        case .rocket: "rocket"
+        }
+    }
+
+    var shortName: String {
+        switch self {
+        case .raceCar: "Car"
+        case .fireTruck: "Fire"
+        case .policeCar: "Police"
+        case .dumpTruck: "Dump"
+        case .carCarrier: "Carrier"
+        case .robot: "Robot"
+        case .ambulance: "Ambulance"
+        case .rocket: "Rocket"
+        }
     }
 }
 
@@ -32,32 +56,30 @@ enum TokenHue: String, CaseIterable, Codable, Hashable {
         }
     }
 
-    var accessibilityName: String {
-        rawValue
-    }
+    var accessibilityName: String { rawValue }
 }
 
 struct PatternToken: Identifiable, Hashable, Codable {
     let id: UUID
-    let shape: TokenShape
+    let toy: ToyKind
     let hue: TokenHue
 
-    init(id: UUID = UUID(), shape: TokenShape, hue: TokenHue) {
+    init(id: UUID = UUID(), toy: ToyKind, hue: TokenHue) {
         self.id = id
-        self.shape = shape
+        self.toy = toy
         self.hue = hue
     }
 
     var accessibilityLabel: String {
-        "\(hue.accessibilityName) \(shape.accessibilityName)"
+        "\(hue.accessibilityName) \(toy.accessibilityName)"
     }
 
     func matches(_ other: PatternToken) -> Bool {
-        shape == other.shape && hue == other.hue
+        toy == other.toy && hue == other.hue
     }
 
     func fresh() -> PatternToken {
-        PatternToken(shape: shape, hue: hue)
+        PatternToken(toy: toy, hue: hue)
     }
 }
 

@@ -13,10 +13,12 @@ final class GameSession {
     private(set) var choices: [PatternToken]
     private(set) var nextAnswerIndex: Int = 0
     private(set) var mistakes: Int = 0
+    private(set) var streak: Int = 0
     private(set) var phase: PlayPhase = .playing
     private(set) var shakeBlankIndex: Int?
     private(set) var lastPlacedIndex: Int?
     private(set) var wrongChoiceID: UUID?
+    private(set) var popToken: Int = 0
 
     init(level: GameLevel) {
         self.level = level
@@ -36,21 +38,31 @@ final class GameSession {
         guard phase == .playing, !isComplete else { return }
         guard let blankIndex = slots.firstIndex(where: \.isBlank) else { return }
 
+        // Always warm the engine on the kid's real touch.
+        HapticsPlayer.shared.warmUp()
+
         let expected = level.answers[nextAnswerIndex]
         if choice.matches(expected) {
             SoundPlayer.shared.playCorrect()
             let nextStep = nextAnswerIndex + 1
+            streak += 1
             HapticsPlayer.shared.correct(step: nextStep, total: level.answers.count)
-            withAnimation(.spring(response: 0.45, dampingFraction: 0.7)) {
+            if streak >= 2 {
+                HapticsPlayer.shared.combo(count: streak)
+                SoundPlayer.shared.playStreak()
+            }
+
+            withAnimation(.spring(response: 0.42, dampingFraction: 0.62)) {
                 slots[blankIndex] = .filled(expected.fresh())
                 nextAnswerIndex += 1
                 lastPlacedIndex = blankIndex
                 wrongChoiceID = nil
+                popToken += 1
             }
 
             if isComplete {
                 let earned = starsEarned()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
                     SoundPlayer.shared.playCelebrate()
                     HapticsPlayer.shared.celebrate(stars: earned)
                     withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
@@ -60,6 +72,7 @@ final class GameSession {
             }
         } else {
             mistakes += 1
+            streak = 0
             SoundPlayer.shared.playWrong()
             HapticsPlayer.shared.wrong()
             wrongChoiceID = choice.id

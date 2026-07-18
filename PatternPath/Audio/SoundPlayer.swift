@@ -4,7 +4,6 @@ import Foundation
 enum GameSound: String {
     case drop
     case success
-    case check
     case complete
     case reward
     case levelUp = "level-up"
@@ -13,14 +12,19 @@ enum GameSound: String {
     case start
     case unlock
     case undo
-    case softDeselect = "soft_deselect"
+    case streak
+    case bonus
+    case achievement
+    case notification
+    case play
+    case badge
 
     var volume: Float {
         switch self {
-        case .complete, .reward, .levelUp: 0.55
-        case .undo, .softDeselect: 0.35
-        case .drop, .success, .check: 0.45
-        default: 0.4
+        case .complete, .reward, .levelUp, .achievement, .bonus, .streak: 0.7
+        case .undo: 0.4
+        case .drop, .success, .select, .press: 0.55
+        default: 0.5
         }
     }
 }
@@ -63,6 +67,9 @@ final class SoundPlayer {
 
     func playCorrect() {
         play(.drop)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+            self?.play(.success)
+        }
     }
 
     func playWrong() {
@@ -71,9 +78,19 @@ final class SoundPlayer {
 
     func playCelebrate() {
         play(.complete)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.35) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
             self?.play(.reward)
         }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+            self?.play(.achievement)
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
+            self?.play(.bonus)
+        }
+    }
+
+    func playStreak() {
+        play(.streak)
     }
 
     func playTap() {
@@ -81,7 +98,10 @@ final class SoundPlayer {
     }
 
     func playLevelStart() {
-        play(.start)
+        play(.play)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
+            self?.play(.start)
+        }
     }
 
     private func configureSession() {
@@ -91,26 +111,20 @@ final class SoundPlayer {
             try session.setCategory(.ambient, mode: .default, options: [.mixWithOthers])
             try session.setActive(true)
             audioReady = true
-        } catch {
-            // Ambient audio is best-effort; gameplay continues silently.
-        }
+        } catch {}
     }
 
     private func preload() {
-        let names = [
-            GameSound.drop, .success, .check, .complete, .reward,
-            .levelUp, .select, .press, .start, .unlock, .undo, .softDeselect
-        ]
-        for sound in names {
+        for sound in [
+            GameSound.drop, .success, .complete, .reward, .levelUp, .select, .press,
+            .start, .unlock, .undo, .streak, .bonus, .achievement, .notification, .play, .badge
+        ] {
             guard let url = Bundle.main.url(forResource: sound.rawValue, withExtension: "mp3") else {
                 continue
             }
-            do {
-                let player = try AVAudioPlayer(contentsOf: url)
+            if let player = try? AVAudioPlayer(contentsOf: url) {
                 player.prepareToPlay()
                 players[sound.rawValue] = player
-            } catch {
-                continue
             }
         }
     }

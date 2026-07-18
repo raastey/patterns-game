@@ -4,19 +4,19 @@ A native SwiftUI iPad game that teaches visual patterns for ages 5 and up.
 
 ## What it is
 
-Kids complete colorful bead sequences along a wooden path. Forty unique levels unlock across five worlds. Each level changes **only color** or **only shape** (never both at once), which keeps the rule clear for ages 5+ and Level 1 autistic players.
+Kids park toys on a multi-row garage board: race cars, fire trucks, police cars, dump trucks, car carriers, robots, ambulances, and rockets. Fifty unique levels. Each level changes **only color** or **only toy** (never both), which keeps the rule clear for ages 5+ and Level 1 autistic players.
 
-1. **Color Path** (1–8) — same shape; watch the colors  
-2. **Shape Path** (9–16) — same color; watch the shapes  
-3. **Longer Colors** (17–24) — longer color walks, still one shape  
-4. **Longer Shapes** (25–32) — longer shape walks, still one color  
-5. **Big Patterns** (33–40) — longer fills; still single-attribute
+1. **Color Garage** (1–10) — same toy; watch the colors  
+2. **Toy Parade** (11–20) — same color; watch the toys  
+3. **Color Missions** (21–30) — gaps, sandwiches, mirrors  
+4. **Toy Missions** (31–40) — gaps, sandwiches, mirrors  
+5. **Super Garage** (41–50) — bigger boards and finales
 
-Wrong taps gently shake with a soft undo sound. Clear a level for stars and the next unlock. Mute anytime with the speaker button.
+Wrong taps gently shake. Streaks celebrate “N in a row!” with arcade pop sounds. Mute with the speaker; tap the waveform for a haptic test (hold to toggle).
 
 ## Sound
 
-Calm UI SFX from [UI SFX](https://github.com/romainsimon/uisfx) (`organic` + soft undo), dedicated to the public domain under **CC0 1.0**. License copy: `PatternPath/Resources/Sounds/LICENSE-AUDIO-UISFX.txt`.
+Playful UI SFX from [UI SFX](https://github.com/romainsimon/uisfx) (`rubber` + `arcade` packs, soft undo), **CC0 1.0**. License: `PatternPath/Resources/Sounds/LICENSE-AUDIO-UISFX.txt`.
 
 ## Requirements
 

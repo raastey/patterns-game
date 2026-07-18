@@ -38,35 +38,35 @@ enum LevelLogicTests {
             }
 
             let filled = level.slots.compactMap(\.token) + level.answers
-            let shapes = Set(filled.map(\.shape))
+            let toys = Set(filled.map(\.toy))
             let hues = Set(filled.map(\.hue))
 
             switch level.focus {
             case .color:
-                if shapes.count != 1 {
-                    print("FAIL level \(level.id): color focus but multiple shapes \(shapes)")
+                if toys.count != 1 {
+                    print("FAIL level \(level.id): color focus but multiple toys \(toys)")
                     ok = false
                 }
-                let choiceShapes = Set(level.choices.map(\.shape))
-                if choiceShapes != shapes {
-                    print("FAIL level \(level.id): color choices must share the path shape")
+                let choiceToys = Set(level.choices.map(\.toy))
+                if choiceToys != toys {
+                    print("FAIL level \(level.id): color choices must share the path toy")
                     ok = false
                 }
-            case .shape:
+            case .toy:
                 if hues.count != 1 {
-                    print("FAIL level \(level.id): shape focus but multiple hues \(hues)")
+                    print("FAIL level \(level.id): toy focus but multiple hues \(hues)")
                     ok = false
                 }
                 let choiceHues = Set(level.choices.map(\.hue))
                 if choiceHues != hues {
-                    print("FAIL level \(level.id): shape choices must share the path color")
+                    print("FAIL level \(level.id): toy choices must share the path color")
                     ok = false
                 }
             }
 
             let signature = level.slots.map { slot -> String in
                 switch slot {
-                case .filled(let token): return "\(token.shape.rawValue)-\(token.hue.rawValue)"
+                case .filled(let token): return "\(token.toy.rawValue)-\(token.hue.rawValue)"
                 case .blank: return "_"
                 }
             }.joined(separator: "|") + "#\(level.focus.rawValue)"
@@ -75,10 +75,19 @@ enum LevelLogicTests {
                 print("FAIL duplicate pattern at level \(level.id): \(signature)")
                 ok = false
             }
+
+            if level.columns < 1 {
+                print("FAIL level \(level.id): columns < 1")
+                ok = false
+            }
+            if level.slots.count >= 4, level.rowCount < 2 {
+                print("FAIL level \(level.id): expected multi-row board, got \(level.rowCount) row(s)")
+                ok = false
+            }
         }
 
         if ok {
-            print("LevelLogicTests passed: \(LevelCatalog.totalCount) unique single-attribute levels")
+            print("LevelLogicTests passed: \(LevelCatalog.totalCount) unique toy garage levels")
         }
         return ok
     }
