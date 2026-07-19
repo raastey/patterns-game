@@ -1,13 +1,4 @@
 {
-  "images" : [
-    {
-      "filename" : "ambulance.png",
-      "idiom" : "universal",
-      "scale" : "1x"
-    }
-  ],
-  "info" : {
-    "author" : "xcode",
-    "version" : 1
-  }
+  "images" : [ { "filename" : "ambulance.png", "idiom" : "universal", "scale" : "1x" } ],
+  "info" : { "author" : "xcode", "version" : 1 }
 }

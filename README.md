@@ -4,7 +4,7 @@ A native SwiftUI iPad game that teaches visual patterns for ages 5 and up.
 
 ## What it is
 
-Kids park toys on a multi-row garage board: race cars, fire trucks, police cars, dump trucks, car carriers, robots, ambulances, and rockets. Fifty unique levels. Each level changes **only color** or **only toy** (never both), which keeps the rule clear for ages 5+ and Level 1 autistic players.
+Kids park toys on a multi-row garage board — **34 open-source vehicles**, including classics (Model T, Topolino, classic sedan), street cars, buses, trucks, rescue, and more. Fifty unique levels. Each level changes **only color** or **only toy** (never both), which keeps the rule clear for ages 5+ and Level 1 autistic players.
 
 1. **Color Garage** (1–10) — same toy; watch the colors  
 2. **Toy Parade** (11–20) — same color; watch the toys  
@@ -16,11 +16,11 @@ Wrong taps gently shake. Streaks celebrate “N in a row!” with arcade pop sou
 
 ## Art
 
-3D toy vehicles rendered from [Kenney](https://kenney.nl) **Car Kit** + **Space Kit** (CC0). License note: `PatternPath/Resources/LICENSE-KENNEY-ASSETS.txt`.
+3D vehicles rendered from CC0 packs (Kenney Car/Space Kit, OpenGameArt vehicle packs, classic Model T / Topolino / W136). License note: `PatternPath/Resources/LICENSE-KENNEY-ASSETS.txt`.
 
 ## Sound
 
-Playful UI SFX from [UI SFX](https://github.com/romainsimon/uisfx) (`rubber` + `arcade` packs, soft undo), **CC0 1.0**. License: `PatternPath/Resources/Sounds/LICENSE-AUDIO-UISFX.txt`.
+Soft UI SFX from [UI SFX](https://github.com/romainsimon/uisfx) (`soft` + `dreamy` + `zen` + `glass` packs), **CC0 1.0**. License: `PatternPath/Resources/Sounds/LICENSE-AUDIO-UISFX.txt`.
 
 ## Requirements
 

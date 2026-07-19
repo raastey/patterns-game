@@ -1,5 +1,19 @@
-Vehicle and toy art derived from Kenney.nl packs (CC0 1.0):
-- Car Kit (https://kenney.nl/assets/car-kit)
-- Space Kit (https://kenney.nl/assets/space-kit)
+Vehicle and toy art (CC0 / public domain), rendered to PNG for Pattern Path:
 
-Rendered to PNG for Pattern Path. Attribution not required; Kenney.nl appreciated.
+Kenney.nl Car Kit + Space Kit
+- https://kenney.nl/assets/car-kit
+- https://kenney.nl/assets/space-kit
+
+OpenGameArt — 3D Vehicles Pack (CC0)
+- https://opengameart.org/content/3d-vehicles-pack
+- bus, cars, jeeps, pickup, trucks
+
+OpenGameArt — LowPoly Cars / Car Pack (CC0)
+- https://opengameart.org/content/lowpoly-cars
+
+OpenGameArt — classic cars (CC0), converted from Blender
+- Ford Model T — https://opengameart.org/content/ford-model-t
+- Fiat Topolino 1936 — https://opengameart.org/content/fiat-topolino-1936
+- Mercedes W136 — https://opengameart.org/content/mercedes-w136
+
+Attribution not required for CC0; credit to Kenney.nl and OpenGameArt authors is appreciated.

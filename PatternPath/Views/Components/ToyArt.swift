@@ -40,18 +40,7 @@ struct ToyArt: View {
 }
 
 extension ToyKind {
-    var assetName: String {
-        switch self {
-        case .raceCar: "ToyraceCar"
-        case .fireTruck: "ToyfireTruck"
-        case .policeCar: "ToypoliceCar"
-        case .dumpTruck: "ToydumpTruck"
-        case .carCarrier: "ToycarCarrier"
-        case .robot: "Toyrobot"
-        case .ambulance: "Toyambulance"
-        case .rocket: "Toyrocket"
-        }
-    }
+    var assetName: String { "Toy\(rawValue)" }
 }
 
 extension Color {

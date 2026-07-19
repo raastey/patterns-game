@@ -63,7 +63,7 @@
 		2665950E493F70B04EFDE144 /* success.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = success.mp3; sourceTree = "<group>"; };
 		2BEA7E29926B813BCD8D8B44 /* undo.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = undo.mp3; sourceTree = "<group>"; };
 		3488410DF586D9B259A6DA74 /* check.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = check.mp3; sourceTree = "<group>"; };
-		34A70CC4807F69ABEB78D6B9 /* PatternPath.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PatternPath.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		34A70CC4807F69ABEB78D6B9 /* PatternPath.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = PatternPath.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		372A323FFBE86029F113AD13 /* reward.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = reward.mp3; sourceTree = "<group>"; };
 		3C3A34235CAE34A91D74486C /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		3D82F16D5C4A5010C9396CE5 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
@@ -264,6 +264,11 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					DD488DCDAFFF791677A7429C = {
+						DevelopmentTeam = "";
+					};
+				};
 			};
 			buildConfigurationList = 9D3BF57729A137DA1A467A9C /* Build configuration list for PBXProject "PatternPath" */;
 			developmentRegion = en;
@@ -355,7 +360,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = P3UCBA6NAQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PatternPath/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -440,7 +444,6 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = P3UCBA6NAQ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = PatternPath/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

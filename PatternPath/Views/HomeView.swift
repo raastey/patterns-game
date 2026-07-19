@@ -85,10 +85,11 @@ struct HomeView: View {
 
     private func brandBlock(_ layout: AdaptiveLayout) -> some View {
         VStack(alignment: layout.isLandscape ? .leading : .center, spacing: 12) {
-            HStack(spacing: 10) {
-                TokenView(token: PatternToken(toy: .fireTruck, hue: .coral), size: layout.isShortLandscape ? 36 : (layout.isCompactWidth ? 42 : 50))
-                TokenView(token: PatternToken(toy: .policeCar, hue: .periwinkle), size: layout.isShortLandscape ? 36 : (layout.isCompactWidth ? 42 : 50))
-                TokenView(token: PatternToken(toy: .robot, hue: .mint), size: layout.isShortLandscape ? 36 : (layout.isCompactWidth ? 42 : 50))
+            HStack(spacing: 8) {
+                TokenView(token: PatternToken(toy: .modelT, hue: .coral), size: layout.isShortLandscape ? 34 : (layout.isCompactWidth ? 40 : 48))
+                TokenView(token: PatternToken(toy: .bus, hue: .sunflower), size: layout.isShortLandscape ? 34 : (layout.isCompactWidth ? 40 : 48))
+                TokenView(token: PatternToken(toy: .fireTruck, hue: .periwinkle), size: layout.isShortLandscape ? 34 : (layout.isCompactWidth ? 40 : 48))
+                TokenView(token: PatternToken(toy: .jeep, hue: .mint), size: layout.isShortLandscape ? 34 : (layout.isCompactWidth ? 40 : 48))
             }
             .offset(y: bob ? -4 : 3)
 
@@ -100,8 +101,8 @@ struct HomeView: View {
                 .lineLimit(1)
 
             Text(layout.isShortLandscape
-                 ? "Park the toys. One thing at a time."
-                 : "Cars, trucks, robots.\nOne thing to watch at a time.")
+                 ? "Park the vehicles. One thing at a time."
+                 : "Classics, buses, trucks, rescue.\nOne thing to watch at a time.")
                 .font(.bodyRounded(layout.isShortLandscape ? 16 : (layout.isCompactWidth ? 18 : 21), weight: .medium))
                 .foregroundStyle(AppTheme.inkSoft)
                 .multilineTextAlignment(layout.isLandscape ? .leading : .center)
@@ -115,14 +116,14 @@ struct HomeView: View {
         let gap = bead * 0.16
         return VStack(spacing: gap) {
             HStack(spacing: gap) {
-                TokenView(token: PatternToken(toy: .fireTruck, hue: .coral), size: bead)
-                TokenView(token: PatternToken(toy: .policeCar, hue: .periwinkle), size: bead)
-                TokenView(token: PatternToken(toy: .raceCar, hue: .sunflower), size: bead)
+                TokenView(token: PatternToken(toy: .modelT, hue: .coral), size: bead)
+                TokenView(token: PatternToken(toy: .topolino, hue: .sunflower), size: bead)
+                TokenView(token: PatternToken(toy: .bus, hue: .periwinkle), size: bead)
             }
             HStack(spacing: gap) {
-                TokenView(token: PatternToken(toy: .robot, hue: .mint), size: bead)
+                TokenView(token: PatternToken(toy: .jeep, hue: .mint), size: bead)
                 BlankSlotView(size: bead, isActive: true)
-                TokenView(token: PatternToken(toy: .carCarrier, hue: .apricot), size: bead)
+                TokenView(token: PatternToken(toy: .fireTruck, hue: .apricot), size: bead)
                     .opacity(0.35)
             }
         }

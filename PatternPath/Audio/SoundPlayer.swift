@@ -18,13 +18,16 @@ enum GameSound: String {
     case notification
     case play
     case badge
+    case check
 
     var volume: Float {
         switch self {
-        case .complete, .reward, .levelUp, .achievement, .bonus, .streak: 0.7
-        case .undo: 0.4
-        case .drop, .success, .select, .press: 0.55
-        default: 0.5
+        case .complete, .reward, .levelUp, .achievement: 0.55
+        case .bonus, .streak: 0.48
+        case .success, .drop: 0.45
+        case .undo: 0.32
+        case .select, .press, .check: 0.38
+        case .play, .start, .unlock, .notification, .badge: 0.42
         }
     }
 }
@@ -67,7 +70,7 @@ final class SoundPlayer {
 
     func playCorrect() {
         play(.drop)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.08) { [weak self] in
             self?.play(.success)
         }
     }
@@ -78,14 +81,11 @@ final class SoundPlayer {
 
     func playCelebrate() {
         play(.complete)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) { [weak self] in
             self?.play(.reward)
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) { [weak self] in
             self?.play(.achievement)
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) { [weak self] in
-            self?.play(.bonus)
         }
     }
 
@@ -99,7 +99,7 @@ final class SoundPlayer {
 
     func playLevelStart() {
         play(.play)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) { [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.14) { [weak self] in
             self?.play(.start)
         }
     }
@@ -117,7 +117,7 @@ final class SoundPlayer {
     private func preload() {
         for sound in [
             GameSound.drop, .success, .complete, .reward, .levelUp, .select, .press,
-            .start, .unlock, .undo, .streak, .bonus, .achievement, .notification, .play, .badge
+            .start, .unlock, .undo, .streak, .bonus, .achievement, .notification, .play, .badge, .check
         ] {
             guard let url = Bundle.main.url(forResource: sound.rawValue, withExtension: "mp3") else {
                 continue
