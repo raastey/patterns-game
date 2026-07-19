@@ -14,6 +14,10 @@ Kids park toys on a multi-row garage board: race cars, fire trucks, police cars,
 
 Wrong taps gently shake. Streaks celebrate “N in a row!” with arcade pop sounds. Mute with the speaker; tap the waveform for a haptic test (hold to toggle).
 
+## Art
+
+3D toy vehicles rendered from [Kenney](https://kenney.nl) **Car Kit** + **Space Kit** (CC0). License note: `PatternPath/Resources/LICENSE-KENNEY-ASSETS.txt`.
+
 ## Sound
 
 Playful UI SFX from [UI SFX](https://github.com/romainsimon/uisfx) (`rubber` + `arcade` packs, soft undo), **CC0 1.0**. License: `PatternPath/Resources/Sounds/LICENSE-AUDIO-UISFX.txt`.

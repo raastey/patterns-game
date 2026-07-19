@@ -1,0 +1,5 @@
+Vehicle and toy art derived from Kenney.nl packs (CC0 1.0):
+- Car Kit (https://kenney.nl/assets/car-kit)
+- Space Kit (https://kenney.nl/assets/space-kit)
+
+Rendered to PNG for Pattern Path. Attribution not required; Kenney.nl appreciated.

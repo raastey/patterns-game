@@ -6,7 +6,8 @@ struct PatternRibbon: View {
     var activeBlankIndex: Int?
     var shakeBlankIndex: Int?
     var lastPlacedIndex: Int?
-    var tokenSize: CGFloat = 72
+    /// When nil, size is derived from the board's GeometryReader.
+    var tokenSize: CGFloat? = nil
 
     private var rows: [[(index: Int, slot: PatternSlot)]] {
         let cols = max(columns, 1)
@@ -22,87 +23,95 @@ struct PatternRibbon: View {
     }
 
     var body: some View {
-        let spacing = tokenSize * 0.18
-        let padH = tokenSize * 0.38
-        let padV = tokenSize * 0.32
+        GeometryReader { geo in
+            let size = resolvedTokenSize(in: geo.size)
+            let spacing = size * 0.16
 
-        VStack(spacing: spacing) {
-            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                HStack(spacing: spacing) {
-                    ForEach(row, id: \.index) { item in
-                        slotView(index: item.index, slot: item.slot)
+            ZStack {
+                parkingLot(cornerRadius: min(geo.size.width, geo.size.height) * 0.08)
+
+                VStack(spacing: spacing) {
+                    ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                        HStack(spacing: spacing) {
+                            ForEach(row, id: \.index) { item in
+                                slotView(index: item.index, slot: item.slot, size: size)
+                            }
+                        }
                     }
                 }
-                .frame(maxWidth: .infinity)
+                .padding(size * 0.28)
             }
-        }
-        .padding(.horizontal, padH)
-        .padding(.vertical, padV)
-        .background {
-            boardTray
+            .frame(width: geo.size.width, height: geo.size.height)
         }
         .accessibilityElement(children: .contain)
         .accessibilityLabel("Toy garage board, \(rows.count) rows")
     }
 
+    private func resolvedTokenSize(in boardSize: CGSize) -> CGFloat {
+        if let tokenSize { return tokenSize }
+        return AdaptiveLayout.boardTokenSize(
+            boardSize: boardSize,
+            slotCount: slots.count,
+            columns: columns
+        )
+    }
+
     @ViewBuilder
-    private func slotView(index: Int, slot: PatternSlot) -> some View {
+    private func slotView(index: Int, slot: PatternSlot, size: CGFloat) -> some View {
         switch slot {
         case .filled(let token):
             TokenView(
                 token: token,
-                size: tokenSize,
+                size: size,
                 isPlaced: lastPlacedIndex == index
             )
             .transition(.scale.combined(with: .opacity))
         case .blank:
             BlankSlotView(
-                size: tokenSize,
+                size: size,
                 isActive: activeBlankIndex == index,
                 isShaking: shakeBlankIndex == index
             )
         }
     }
 
-    private var boardTray: some View {
-        let radius = tokenSize * 0.42
-        return RoundedRectangle(cornerRadius: radius, style: .continuous)
+    private func parkingLot(cornerRadius: CGFloat) -> some View {
+        RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
             .fill(AppTheme.trayGradient)
             .overlay {
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .fill(
-                        LinearGradient(
-                            colors: [
-                                Color.white.opacity(0.28),
-                                Color.clear,
-                                Color.black.opacity(0.12)
-                            ],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
+                // Lane dashes
+                RoundedRectangle(cornerRadius: cornerRadius * 0.85, style: .continuous)
+                    .strokeBorder(
+                        AppTheme.trayLine.opacity(0.35),
+                        style: StrokeStyle(lineWidth: 3, dash: [10, 8])
                     )
+                    .padding(14)
             }
             .overlay {
-                RoundedRectangle(cornerRadius: radius, style: .continuous)
+                RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
                     .strokeBorder(
                         LinearGradient(
                             colors: [
-                                Color.white.opacity(0.55),
-                                Color.white.opacity(0.12)
+                                Color.white.opacity(0.28),
+                                Color.black.opacity(0.25)
                             ],
                             startPoint: .top,
                             endPoint: .bottom
                         ),
-                        lineWidth: 1.5
+                        lineWidth: 2
                     )
             }
-            .overlay {
-                RoundedRectangle(cornerRadius: radius * 0.85, style: .continuous)
-                    .stroke(Color.black.opacity(0.08), lineWidth: 3)
-                    .padding(6)
-                    .blur(radius: 0.5)
+            .overlay(alignment: .top) {
+                // Shop overhead highlight
+                LinearGradient(
+                    colors: [Color.white.opacity(0.18), Color.clear],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: 48)
+                .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
-            .shadow(color: AppTheme.trayDeep.opacity(0.35), radius: 22, y: 12)
-            .shadow(color: AppTheme.ink.opacity(0.08), radius: 4, y: 1)
+            .shadow(color: Color.black.opacity(0.35), radius: 18, y: 10)
+            .shadow(color: Color.black.opacity(0.12), radius: 3, y: 1)
     }
 }

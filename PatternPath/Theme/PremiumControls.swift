@@ -128,21 +128,22 @@ struct FocusBadge: View {
     let focus: PatternFocus
 
     var body: some View {
-        HStack(spacing: 8) {
+        HStack(spacing: 6) {
             Image(systemName: focus == .color ? "paintpalette.fill" : "car.fill")
-                .font(.system(size: 14, weight: .bold))
+                .font(.system(size: 13, weight: .bold))
             Text(focus.prompt)
-                .font(.bodyRounded(17, weight: .bold))
+                .font(.bodyRounded(14, weight: .bold))
+                .lineLimit(1)
         }
-        .foregroundStyle(AppTheme.accentDeep)
-        .padding(.horizontal, 16)
-        .padding(.vertical, 10)
+        .foregroundStyle(AppTheme.ink)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
         .background {
             Capsule(style: .continuous)
-                .fill(AppTheme.accent.opacity(0.12))
+                .fill(AppTheme.accent.opacity(0.22))
                 .overlay {
                     Capsule(style: .continuous)
-                        .strokeBorder(AppTheme.accent.opacity(0.22), lineWidth: 1)
+                        .strokeBorder(AppTheme.accentDeep.opacity(0.35), lineWidth: 1)
                 }
         }
     }

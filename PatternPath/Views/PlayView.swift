@@ -8,6 +8,7 @@ struct PlayView: View {
     let onMap: () -> Void
 
     @State private var appear = false
+    @State private var shelfWidth: CGFloat = 0
 
     init(level: GameLevel, onExit: @escaping () -> Void, onNextLevel: @escaping (Int) -> Void, onMap: @escaping () -> Void) {
         _session = State(initialValue: GameSession(level: level))
@@ -21,15 +22,10 @@ struct PlayView: View {
             SkyBackground()
 
             AdaptiveReader { layout in
-                Group {
-                    if layout.isLandscape {
-                        landscapeBody(layout)
-                    } else {
-                        portraitBody(layout)
-                    }
-                }
-                .padding(.horizontal, layout.horizontalPadding)
-                .padding(.vertical, layout.isShortLandscape ? 8 : 12)
+                playBody(layout)
+                    .padding(.horizontal, layout.horizontalPadding)
+                    .padding(.top, layout.isShortLandscape ? 6 : 10)
+                    .padding(.bottom, layout.isShortLandscape ? 6 : 10)
             }
 
             if session.phase == .celebrating {
@@ -73,52 +69,57 @@ struct PlayView: View {
         }
     }
 
-    // MARK: - Portrait
+    // MARK: - Layout
 
-    private func portraitBody(_ layout: AdaptiveLayout) -> some View {
-        VStack(spacing: 0) {
-            topBar(layout)
-            Spacer(minLength: layout.isCompactWidth ? 8 : 14)
-            headerBlock(layout, compact: false)
-            Spacer(minLength: layout.isCompactWidth ? 14 : 20)
-            ribbonBlock(layout)
-            streakLabel
-            Spacer(minLength: layout.isCompactWidth ? 14 : 22)
-            paletteBlock(layout)
-            Spacer(minLength: layout.isCompactWidth ? 16 : 24)
-        }
-    }
-
-    // MARK: - Landscape
-
-    private func landscapeBody(_ layout: AdaptiveLayout) -> some View {
+    private func playBody(_ layout: AdaptiveLayout) -> some View {
         VStack(spacing: layout.isShortLandscape ? 8 : 12) {
             topBar(layout)
+            titleLine(layout)
 
-            HStack(alignment: .center, spacing: layout.isShortLandscape ? 16 : 28) {
-                VStack(alignment: .leading, spacing: 10) {
-                    headerBlock(layout, compact: true)
-                    streakLabel
-                    Spacer(minLength: 0)
-                }
-                .frame(maxWidth: layout.isShortLandscape ? 180 : 240, alignment: .leading)
+            // Garage board claims all remaining height
+            PatternRibbon(
+                slots: session.slots,
+                columns: session.level.columns,
+                activeBlankIndex: activeBlankIndex,
+                shakeBlankIndex: session.shakeBlankIndex,
+                lastPlacedIndex: session.lastPlacedIndex,
+                tokenSize: nil
+            )
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .scaleEffect(session.popToken > 0 ? 1.015 : 1.0)
+            .animation(.spring(response: 0.28, dampingFraction: 0.55), value: session.popToken)
+            .opacity(appear ? 1 : 0)
 
-                VStack(spacing: layout.isShortLandscape ? 10 : 16) {
-                    ribbonBlock(layout)
-                    paletteBlock(layout)
-                }
-                .frame(maxWidth: .infinity)
+            streakLabel
+
+            ChoicePalette(
+                choices: session.choices,
+                focus: session.level.focus,
+                wrongChoiceID: session.wrongChoiceID,
+                tokenSize: layout.choiceTokenSize(
+                    choiceCount: session.choices.count,
+                    shelfWidth: shelfWidth > 0 ? shelfWidth : nil
+                ),
+                compact: layout.isShortLandscape
+            ) { token in
+                session.place(token)
             }
-            .frame(maxHeight: .infinity)
+            .background {
+                GeometryReader { geo in
+                    Color.clear.preference(key: ShelfWidthKey.self, value: geo.size.width)
+                }
+            }
+            .onPreferenceChange(ShelfWidthKey.self) { shelfWidth = $0 }
+            .opacity(appear ? 1 : 0)
         }
     }
 
-    // MARK: - Pieces
+    // MARK: - Chrome
 
     private func topBar(_ layout: AdaptiveLayout) -> some View {
         HStack(spacing: 8) {
             ToolbarChip(
-                title: layout.isShortLandscape || layout.isCompactWidth ? "Map" : "Levels",
+                title: layout.isCompactWidth || layout.isShortLandscape ? "Map" : "Levels",
                 systemImage: "square.grid.2x2.fill"
             ) {
                 onExit()
@@ -133,88 +134,54 @@ struct PlayView: View {
             HStack(spacing: 6) {
                 MuteButton()
                 HapticsButton()
-                if !layout.isShortLandscape {
-                    StatusChip(text: session.progressText)
-                        .accessibilityLabel("Filled \(session.nextAnswerIndex) of \(session.level.answers.count)")
-                }
+                StatusChip(text: session.progressText)
+                    .accessibilityLabel("Filled \(session.nextAnswerIndex) of \(session.level.answers.count)")
             }
         }
     }
 
-    private func headerBlock(_ layout: AdaptiveLayout, compact: Bool) -> some View {
-        VStack(alignment: compact ? .leading : .center, spacing: compact ? 6 : 10) {
+    private func titleLine(_ layout: AdaptiveLayout) -> some View {
+        HStack(alignment: .firstTextBaseline, spacing: 10) {
             Text(session.level.title)
                 .font(.display(layout.playTitleSize, weight: .bold))
                 .foregroundStyle(AppTheme.ink)
-                .multilineTextAlignment(compact ? .leading : .center)
-                .lineLimit(compact ? 2 : 2)
-                .minimumScaleFactor(0.8)
+                .lineLimit(1)
+                .minimumScaleFactor(0.75)
 
             FocusBadge(focus: session.level.focus)
 
-            if !layout.isShortLandscape {
+            if !layout.isShortLandscape && !layout.isCompactWidth {
                 Text(session.level.subtitle)
-                    .font(.bodyRounded(compact ? 15 : (layout.isCompactWidth ? 16 : 19), weight: .medium))
+                    .font(.bodyRounded(15, weight: .medium))
                     .foregroundStyle(AppTheme.inkSoft)
-                    .multilineTextAlignment(compact ? .leading : .center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
 
-            if layout.isShortLandscape {
-                Text(session.progressText)
-                    .font(.bodyRounded(14, weight: .semibold))
-                    .foregroundStyle(AppTheme.inkSoft)
-                    .monospacedDigit()
-            }
+            Spacer(minLength: 0)
         }
-        .frame(maxWidth: .infinity, alignment: compact ? .leading : .center)
         .opacity(appear ? 1 : 0)
-        .offset(y: appear ? 0 : 12)
-    }
-
-    private func ribbonBlock(_ layout: AdaptiveLayout) -> some View {
-        PatternRibbon(
-            slots: session.slots,
-            columns: session.level.columns,
-            activeBlankIndex: activeBlankIndex,
-            shakeBlankIndex: session.shakeBlankIndex,
-            lastPlacedIndex: session.lastPlacedIndex,
-            tokenSize: layout.ribbonTokenSize(
-                slotCount: session.slots.count,
-                columns: session.level.columns
-            )
-        )
-        .scaleEffect(session.popToken > 0 ? 1.02 : 1.0)
-        .animation(.spring(response: 0.28, dampingFraction: 0.55), value: session.popToken)
-        .opacity(appear ? 1 : 0)
-        .offset(y: appear ? 0 : 14)
-    }
-
-    private func paletteBlock(_ layout: AdaptiveLayout) -> some View {
-        ChoicePalette(
-            choices: session.choices,
-            focus: session.level.focus,
-            wrongChoiceID: session.wrongChoiceID,
-            tokenSize: layout.choiceTokenSize(choiceCount: session.choices.count),
-            compact: layout.isShortLandscape
-        ) { token in
-            session.place(token)
-        }
-        .frame(maxWidth: layout.isLandscape ? .infinity : 720)
-        .opacity(appear ? 1 : 0)
-        .offset(y: appear ? 0 : 18)
     }
 
     @ViewBuilder
     private var streakLabel: some View {
         if session.streak >= 2, session.phase == .playing {
             Text("\(session.streak) in a row!")
-                .font(.bodyRounded(15, weight: .bold))
+                .font(.bodyRounded(16, weight: .bold))
                 .foregroundStyle(AppTheme.accentDeep)
+                .frame(maxWidth: .infinity)
                 .transition(.scale.combined(with: .opacity))
         }
     }
 
     private var activeBlankIndex: Int? {
         session.slots.firstIndex(where: \.isBlank)
+    }
+}
+
+private struct ShelfWidthKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
     }
 }

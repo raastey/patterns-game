@@ -16,9 +16,11 @@ struct SkyBackground: View {
                         .init(0, 1), .init(0.5, 1), .init(1, 1)
                     ],
                     colors: [
-                        AppTheme.mistDeep, AppTheme.mistMid, AppTheme.bloomMint.opacity(0.85),
+                        AppTheme.mistDeep, AppTheme.mistMid, Color(red: 0.55, green: 0.70, blue: 0.78),
                         AppTheme.mistMid, AppTheme.mistLight, AppTheme.sandGlow,
-                        AppTheme.sandGlow, AppTheme.bloomApricot.opacity(0.55), AppTheme.mistLight
+                        Color(red: 0.55, green: 0.58, blue: 0.62),
+                        AppTheme.trayMid.opacity(0.85),
+                        AppTheme.trayDeep.opacity(0.9)
                     ]
                 )
                 .ignoresSafeArea()
@@ -27,42 +29,39 @@ struct SkyBackground: View {
             }
 
             GeometryReader { geo in
+                // Shop light bloom
                 Circle()
                     .fill(
                         RadialGradient(
-                            colors: [Color.white.opacity(0.55), Color.white.opacity(0)],
+                            colors: [Color.white.opacity(0.45), Color.white.opacity(0)],
                             center: .center,
-                            startRadius: 10,
-                            endRadius: geo.size.width * 0.28
+                            startRadius: 8,
+                            endRadius: geo.size.width * 0.32
                         )
                     )
-                    .frame(width: geo.size.width * 0.55)
+                    .frame(width: geo.size.width * 0.6)
                     .offset(
-                        x: -geo.size.width * 0.1 + (drift ? 12 : -8),
-                        y: -geo.size.height * 0.22
+                        x: geo.size.width * 0.15 + (drift ? 10 : -6),
+                        y: -geo.size.height * 0.28
                     )
 
+                // Warm bay lamp
                 Circle()
-                    .fill(AppTheme.bloomApricot.opacity(0.28))
-                    .frame(width: geo.size.width * 0.42)
-                    .blur(radius: 50)
+                    .fill(AppTheme.bloomApricot.opacity(0.32))
+                    .frame(width: geo.size.width * 0.4)
+                    .blur(radius: 48)
                     .offset(
-                        x: geo.size.width * 0.58 + (drift ? -10 : 14),
-                        y: geo.size.height * 0.62
+                        x: geo.size.width * 0.62 + (drift ? -8 : 12),
+                        y: geo.size.height * 0.08
                     )
 
-                Circle()
-                    .fill(AppTheme.bloomMint.opacity(0.22))
-                    .frame(width: geo.size.width * 0.34)
-                    .blur(radius: 40)
-                    .offset(
-                        x: geo.size.width * 0.7,
-                        y: geo.size.height * 0.08 + (drift ? 16 : 0)
-                    )
-
-                // Soft floor vignette for depth
+                // Concrete floor wash at bottom
                 LinearGradient(
-                    colors: [Color.clear, Color.white.opacity(0.18)],
+                    colors: [
+                        Color.clear,
+                        AppTheme.trayMid.opacity(0.35),
+                        AppTheme.trayDeep.opacity(0.55)
+                    ],
                     startPoint: .center,
                     endPoint: .bottom
                 )
@@ -72,7 +71,7 @@ struct SkyBackground: View {
         }
         .onAppear {
             guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 8).repeatForever(autoreverses: true)) {
+            withAnimation(.easeInOut(duration: 9).repeatForever(autoreverses: true)) {
                 drift = true
             }
         }

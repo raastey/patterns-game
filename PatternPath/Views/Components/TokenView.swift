@@ -43,7 +43,7 @@ struct BlankSlotView: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
-                .fill(Color.white.opacity(isActive ? 0.45 : 0.22))
+                .fill(Color.white.opacity(isActive ? 0.22 : 0.10))
                 .overlay {
                     RoundedRectangle(cornerRadius: size * 0.22, style: .continuous)
                         .strokeBorder(
@@ -54,16 +54,16 @@ struct BlankSlotView: View {
                         )
                         .foregroundStyle(
                             isActive
-                                ? AnyShapeStyle(AppTheme.accent.opacity(0.9))
-                                : AnyShapeStyle(AppTheme.inkFaint.opacity(0.45))
+                                ? AnyShapeStyle(AppTheme.trayLine)
+                                : AnyShapeStyle(Color.white.opacity(0.35))
                         )
                 }
-                .shadow(color: isActive ? AppTheme.accent.opacity(0.22) : .clear, radius: 12, y: 4)
+                .shadow(color: isActive ? AppTheme.trayLine.opacity(0.45) : .clear, radius: 12, y: 4)
 
             if isActive {
                 Image(systemName: "plus")
-                    .font(.system(size: size * 0.28, weight: .medium, design: .rounded))
-                    .foregroundStyle(AppTheme.accent.opacity(0.55))
+                    .font(.system(size: size * 0.28, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppTheme.trayLine.opacity(0.9))
                     .scaleEffect(pulse ? 1.08 : 0.92)
             }
         }
