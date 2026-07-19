@@ -10,6 +10,9 @@ Engineering for **v1.0.0** is closed. Binary is on TestFlight.
 | TestFlight | Internal · `READY_FOR_BETA_TESTING` |
 | Price | **$1.99** (USA base; schedule set) |
 | App icon | Present on build (Apps list uses processed build icon) |
+| Metadata | Filled via `scripts/asc-update-patternpath-metadata.py` (Education, 4+, worldwide, review notes) |
+| Legal URLs | Privacy / Support / Terms → `sixtwelve.studio` |
+| Content rights | Uses third-party content (CC0 Kenney / OGA) |
 | TestFlight | https://appstoreconnect.apple.com/apps/6792539628/testflight/ios |
 | App Store | https://appstoreconnect.apple.com/apps/6792539628/appstore |
 
@@ -115,9 +118,19 @@ Art and sound are open-source CC0 assets (see in-app licenses).
 
 **Keywords (100):** pattern,kids,autism,learning,toys,garage,colors,preschool,puzzle,calm
 
-**Support URL:** https://raastey.com (or your support page)
+**Support URL:** https://sixtwelve.studio/support
 
-**Marketing URL:** optional
+**Privacy URL:** https://sixtwelve.studio/privacy
+
+**Marketing URL:** https://sixtwelve.studio
+
+**Terms URL:** https://sixtwelve.studio/legal
+
+Refresh Connect copy anytime:
+
+```bash
+python3 scripts/asc-update-patternpath-metadata.py
+```
 
 **Age rating:** 4+  
 Content: no unrestricted web, no violence, no gambling, etc. (all None / No)
