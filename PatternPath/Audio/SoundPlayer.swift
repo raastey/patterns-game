@@ -36,18 +36,17 @@ enum GameSound: String {
 final class SoundPlayer {
     static let shared = SoundPlayer()
 
-    private let muteKey = "patternpath.soundMuted"
     private var players: [String: AVAudioPlayer] = [:]
     private var audioReady = false
 
     var isMuted: Bool {
         didSet {
-            UserDefaults.standard.set(isMuted, forKey: muteKey)
+            UserDefaults.standard.set(isMuted, forKey: UserDefaultsKeys.soundMuted)
         }
     }
 
     private init() {
-        isMuted = UserDefaults.standard.bool(forKey: muteKey)
+        isMuted = UserDefaults.standard.bool(forKey: UserDefaultsKeys.soundMuted)
         configureSession()
         preload()
     }
@@ -77,6 +76,10 @@ final class SoundPlayer {
 
     func playWrong() {
         play(.undo)
+    }
+
+    func playUndo() {
+        play(.press)
     }
 
     func playCelebrate() {

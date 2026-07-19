@@ -4,11 +4,13 @@ enum AppRoute: Equatable {
     case home
     case levels
     case stickers
+    case settings
     case play(Int)
 }
 
 struct RootView: View {
     @State private var progress = ProgressStore()
+    @State private var settings = AppSettings()
     @State private var route: AppRoute = .home
 
     var body: some View {
@@ -18,7 +20,8 @@ struct RootView: View {
                 HomeView(
                     onPlay: { navigate(to: .play(progress.highestUnlocked)) },
                     onLevels: { navigate(to: .levels) },
-                    onStickers: { navigate(to: .stickers) }
+                    onStickers: { navigate(to: .stickers) },
+                    onSettings: { navigate(to: .settings) }
                 )
                 .transition(pageTransition)
 
@@ -31,6 +34,10 @@ struct RootView: View {
 
             case .stickers:
                 StickerCollectionView(onClose: { navigate(to: .home) })
+                    .transition(pageTransition)
+
+            case .settings:
+                ParentSettingsView(onClose: { navigate(to: .home) })
                     .transition(pageTransition)
 
             case .play(let id):
@@ -53,6 +60,7 @@ struct RootView: View {
             }
         }
         .environment(progress)
+        .environment(settings)
         .preferredColorScheme(.light)
     }
 

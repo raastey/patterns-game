@@ -2,8 +2,9 @@ import SwiftUI
 
 struct PlayView: View {
     @Environment(ProgressStore.self) private var progress
+    @Environment(AppSettings.self) private var settings
     @State private var session: GameSession
-    @State private var newSticker: GarageSticker?
+    @State private var clearReward: ClearReward?
     let onExit: () -> Void
     let onNextLevel: (Int) -> Void
     let onMap: () -> Void
@@ -20,15 +21,20 @@ struct PlayView: View {
 
     private var theme: WorldTheme { session.level.theme }
 
+    private var isCoaching: Bool {
+        !settings.coachCompleted
+            && session.level.id == 1
+            && session.phase == .playing
+            && session.nextAnswerIndex == 0
+    }
+
     var body: some View {
         ZStack {
             SkyBackground(theme: theme)
 
             AdaptiveReader { layout in
                 playBody(layout)
-                    .padding(.horizontal, layout.horizontalPadding)
-                    .padding(.top, layout.isShortLandscape ? 6 : 10)
-                    .padding(.bottom, layout.isShortLandscape ? 6 : 10)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
             }
 
             if session.phase == .celebrating {
@@ -36,18 +42,12 @@ struct PlayView: View {
                     level: session.level,
                     stars: session.starsEarned(),
                     hasNext: session.level.id < LevelCatalog.totalCount,
-                    newSticker: newSticker,
+                    newSticker: clearReward?.newSticker,
+                    completedWorldID: clearReward?.completedWorldID,
                     worldFill: progress.worldFill(worldID: session.level.world),
                     onNext: { onNextLevel(session.level.id + 1) },
                     onMap: onMap,
-                    onReplay: {
-                        newSticker = nil
-                        session = GameSession(level: session.level)
-                        appear = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                            withAnimation(Motion.softSpring) { appear = true }
-                        }
-                    }
+                    onReplay: replayLevel
                 )
                 .transition(.opacity.combined(with: .scale(scale: 0.98)))
             }
@@ -60,17 +60,21 @@ struct PlayView: View {
         }
         .onChange(of: session.phase) { _, phase in
             if phase == .celebrating {
-                let previousUnlocked = progress.highestUnlocked
-                newSticker = progress.recordClear(
+                clearReward = progress.recordClear(
                     levelID: session.level.id,
                     stars: session.level.starsToEarn,
                     mistakes: session.mistakes
                 )
-                if progress.highestUnlocked > previousUnlocked || newSticker != nil {
+                if clearReward?.newSticker != nil || clearReward?.completedWorldID != nil {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
                         HapticsPlayer.shared.unlock()
                     }
                 }
+            }
+        }
+        .onChange(of: session.nextAnswerIndex) { _, index in
+            if session.level.id == 1, index > 0 {
+                settings.completeCoach()
             }
         }
     }
@@ -78,36 +82,78 @@ struct PlayView: View {
     // MARK: - Layout
 
     private func playBody(_ layout: AdaptiveLayout) -> some View {
-        VStack(spacing: layout.isShortLandscape ? 8 : 12) {
-            topBar(layout)
-            titleLine(layout)
-            missionChip(layout)
+        VStack(spacing: 0) {
+            chrome(layout)
+                .padding(.horizontal, layout.playChromePadding)
+                .padding(.top, layout.playTopPadding)
+                .padding(.bottom, layout.isShortLandscape ? 6 : 10)
+
+            if isCoaching {
+                CoachBanner(text: "Tap the glowing toy. It parks in the empty spot.")
+                    .padding(.horizontal, layout.playBoardPadding)
+                    .padding(.bottom, 8)
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
 
             PatternRibbon(
                 slots: session.slots,
                 columns: session.level.columns,
                 theme: theme,
-                activeBlankIndex: activeBlankIndex,
+                activeBlankIndex: session.activeBlankIndex,
                 shakeBlankIndex: session.shakeBlankIndex,
                 lastPlacedIndex: session.lastPlacedIndex,
+                coachActiveBlank: isCoaching,
                 tokenSize: nil
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .scaleEffect(session.popToken > 0 ? 1.015 : 1.0)
+            .layoutPriority(1)
+            .padding(.horizontal, layout.playBoardPadding)
+            .scaleEffect(session.popToken > 0 ? 1.012 : 1.0)
             .animation(.spring(response: 0.28, dampingFraction: 0.55), value: session.popToken)
             .opacity(appear ? 1 : 0)
 
-            streakLabel
+            if session.streak >= 2, session.phase == .playing {
+                Text("\(session.streak) in a row!")
+                    .font(.bodyRounded(16, weight: .bold))
+                    .foregroundStyle(AppTheme.accentDeep)
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 4)
+                    .transition(.scale.combined(with: .opacity))
+            }
+
+            HStack(spacing: 10) {
+                if session.canUndo {
+                    Button {
+                        session.undoLastPlacement()
+                    } label: {
+                        Label("Back", systemImage: "arrow.uturn.backward")
+                            .font(.bodyRounded(15, weight: .bold))
+                            .foregroundStyle(AppTheme.ink)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 10)
+                            .background {
+                                Capsule().fill(Color.white.opacity(0.75))
+                            }
+                    }
+                    .buttonStyle(PremiumPressStyle())
+                    .accessibilityHint("Removes the last toy you parked")
+                    .transition(.scale.combined(with: .opacity))
+                }
+                Spacer(minLength: 0)
+            }
+            .padding(.horizontal, layout.playBoardPadding)
+            .animation(Motion.snappy, value: session.canUndo)
 
             ChoicePalette(
                 choices: session.choices,
                 focus: session.level.focus,
                 wrongChoiceID: session.wrongChoiceID,
+                coachChoiceID: isCoaching ? session.coachChoiceID : nil,
                 tokenSize: layout.choiceTokenSize(
                     choiceCount: session.choices.count,
                     shelfWidth: shelfWidth > 0 ? shelfWidth : nil
                 ),
-                compact: layout.isShortLandscape
+                compact: layout.isShortLandscape || layout.isCompactWidth
             ) { token in
                 session.place(token)
             }
@@ -117,11 +163,26 @@ struct PlayView: View {
                 }
             }
             .onPreferenceChange(ShelfWidthKey.self) { shelfWidth = $0 }
+            .padding(.horizontal, layout.playBoardPadding)
+            .padding(.top, layout.isShortLandscape ? 6 : 8)
+            .padding(.bottom, layout.playBottomPadding)
             .opacity(appear ? 1 : 0)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
     }
 
     // MARK: - Chrome
+
+    private func chrome(_ layout: AdaptiveLayout) -> some View {
+        VStack(spacing: layout.isShortLandscape ? 6 : 8) {
+            topBar(layout)
+            titleLine(layout)
+            if !isCoaching {
+                missionChip(layout)
+            }
+        }
+        .opacity(appear ? 1 : 0)
+    }
 
     private func topBar(_ layout: AdaptiveLayout) -> some View {
         HStack(spacing: 8) {
@@ -159,7 +220,6 @@ struct PlayView: View {
 
             Spacer(minLength: 0)
         }
-        .opacity(appear ? 1 : 0)
     }
 
     private func missionChip(_ layout: AdaptiveLayout) -> some View {
@@ -170,12 +230,12 @@ struct PlayView: View {
             Text(session.level.missionLine)
                 .font(.bodyRounded(layout.isShortLandscape ? 13 : 15, weight: .semibold))
                 .foregroundStyle(AppTheme.inkSoft)
-                .lineLimit(layout.isShortLandscape ? 1 : 2)
+                .lineLimit(1)
                 .minimumScaleFactor(0.8)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 12)
-        .padding(.vertical, layout.isShortLandscape ? 7 : 9)
+        .padding(.vertical, layout.isShortLandscape ? 6 : 8)
         .background {
             RoundedRectangle(cornerRadius: 14, style: .continuous)
                 .fill(Color.white.opacity(0.55))
@@ -184,22 +244,15 @@ struct PlayView: View {
                         .strokeBorder(Color.white.opacity(0.45), lineWidth: 1)
                 }
         }
-        .opacity(appear ? 1 : 0)
     }
 
-    @ViewBuilder
-    private var streakLabel: some View {
-        if session.streak >= 2, session.phase == .playing {
-            Text("\(session.streak) in a row!")
-                .font(.bodyRounded(16, weight: .bold))
-                .foregroundStyle(AppTheme.accentDeep)
-                .frame(maxWidth: .infinity)
-                .transition(.scale.combined(with: .opacity))
+    private func replayLevel() {
+        clearReward = nil
+        session = GameSession(level: session.level)
+        appear = false
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            withAnimation(Motion.softSpring) { appear = true }
         }
-    }
-
-    private var activeBlankIndex: Int? {
-        session.slots.firstIndex(where: \.isBlank)
     }
 }
 

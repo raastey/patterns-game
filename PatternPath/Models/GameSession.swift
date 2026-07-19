@@ -20,10 +20,13 @@ final class GameSession {
     private(set) var wrongChoiceID: UUID?
     private(set) var popToken: Int = 0
 
-    init(level: GameLevel) {
+    /// Slot indices filled by the player this run, oldest first.
+    private var placementStack: [Int] = []
+
+    init(level: GameLevel, shuffleChoices: Bool = true) {
         self.level = level
         self.slots = level.slots
-        self.choices = level.choices.shuffled()
+        self.choices = shuffleChoices ? level.choices.shuffled() : level.choices
     }
 
     var progressText: String {
@@ -34,59 +37,104 @@ final class GameSession {
         nextAnswerIndex >= level.answers.count
     }
 
+    var canUndo: Bool {
+        phase == .playing && !placementStack.isEmpty
+    }
+
+    var activeBlankIndex: Int? {
+        slots.firstIndex(where: \.isBlank)
+    }
+
+    /// Choice that matches the next answer (for first-run coach).
+    var coachChoiceID: UUID? {
+        guard phase == .playing, !isComplete else { return nil }
+        let expected = level.answers[nextAnswerIndex]
+        return choices.first(where: { $0.matches(expected) })?.id
+    }
+
     func place(_ choice: PatternToken) {
         guard phase == .playing, !isComplete else { return }
         guard let blankIndex = slots.firstIndex(where: \.isBlank) else { return }
 
-        // Always warm the engine on the kid's real touch.
         HapticsPlayer.shared.warmUp()
 
         let expected = level.answers[nextAnswerIndex]
         if choice.matches(expected) {
-            SoundPlayer.shared.playCorrect()
-            let nextStep = nextAnswerIndex + 1
-            streak += 1
-            HapticsPlayer.shared.correct(step: nextStep, total: level.answers.count)
-            if streak >= 2 {
-                HapticsPlayer.shared.combo(count: streak)
-                SoundPlayer.shared.playStreak()
-            }
-
-            withAnimation(.spring(response: 0.42, dampingFraction: 0.62)) {
-                slots[blankIndex] = .filled(expected.fresh())
-                nextAnswerIndex += 1
-                lastPlacedIndex = blankIndex
-                wrongChoiceID = nil
-                popToken += 1
-            }
-
-            if isComplete {
-                let earned = starsEarned()
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) {
-                    SoundPlayer.shared.playCelebrate()
-                    HapticsPlayer.shared.celebrate(stars: earned)
-                    withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
-                        self.phase = .celebrating
-                    }
-                }
-            }
+            applyCorrect(expected: expected, blankIndex: blankIndex)
         } else {
-            mistakes += 1
+            applyWrong(choiceID: choice.id, blankIndex: blankIndex)
+        }
+    }
+
+    func undoLastPlacement() {
+        guard canUndo, let slotIndex = placementStack.popLast() else { return }
+        guard nextAnswerIndex > 0 else { return }
+
+        SoundPlayer.shared.playUndo()
+        HapticsPlayer.shared.tap()
+
+        withAnimation(.spring(response: 0.38, dampingFraction: 0.72)) {
+            slots[slotIndex] = .blank(UUID())
+            nextAnswerIndex -= 1
+            lastPlacedIndex = placementStack.last
+            wrongChoiceID = nil
+            shakeBlankIndex = nil
             streak = 0
-            SoundPlayer.shared.playWrong()
-            HapticsPlayer.shared.wrong()
-            wrongChoiceID = choice.id
-            shakeBlankIndex = blankIndex
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) {
-                withAnimation {
-                    self.shakeBlankIndex = nil
-                    self.wrongChoiceID = nil
+        }
+    }
+
+    func starsEarned() -> Int {
+        Self.stars(forMistakes: mistakes, maxStars: level.starsToEarn)
+    }
+
+    static func stars(forMistakes mistakes: Int, maxStars: Int = 3) -> Int {
+        max(1, min(3, maxStars - min(mistakes, 2)))
+    }
+
+    private func applyCorrect(expected: PatternToken, blankIndex: Int) {
+        SoundPlayer.shared.playCorrect()
+        let nextStep = nextAnswerIndex + 1
+        streak += 1
+        HapticsPlayer.shared.correct(step: nextStep, total: level.answers.count)
+        if streak >= 2 {
+            HapticsPlayer.shared.combo(count: streak)
+            SoundPlayer.shared.playStreak()
+        }
+
+        withAnimation(.spring(response: 0.42, dampingFraction: 0.62)) {
+            slots[blankIndex] = .filled(expected.fresh())
+            nextAnswerIndex += 1
+            lastPlacedIndex = blankIndex
+            placementStack.append(blankIndex)
+            wrongChoiceID = nil
+            popToken += 1
+        }
+
+        if isComplete {
+            let earned = starsEarned()
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.28) { [weak self] in
+                guard let self else { return }
+                SoundPlayer.shared.playCelebrate()
+                HapticsPlayer.shared.celebrate(stars: earned)
+                withAnimation(.spring(response: 0.5, dampingFraction: 0.75)) {
+                    self.phase = .celebrating
                 }
             }
         }
     }
 
-    func starsEarned() -> Int {
-        max(1, min(3, level.starsToEarn - min(mistakes, 2)))
+    private func applyWrong(choiceID: UUID, blankIndex: Int) {
+        mistakes += 1
+        streak = 0
+        SoundPlayer.shared.playWrong()
+        HapticsPlayer.shared.wrong()
+        wrongChoiceID = choiceID
+        shakeBlankIndex = blankIndex
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.45) { [weak self] in
+            withAnimation {
+                self?.shakeBlankIndex = nil
+                self?.wrongChoiceID = nil
+            }
+        }
     }
 }

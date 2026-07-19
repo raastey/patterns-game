@@ -14,8 +14,10 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
+	<key>CFBundleDisplayName</key>
+	<string>Pattern Path</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
 	<key>UILaunchScreen</key>
@@ -23,6 +25,8 @@
 		<key>UIColorName</key>
 		<string>AccentColor</string>
 	</dict>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>

@@ -7,6 +7,7 @@ struct PatternRibbon: View {
     var activeBlankIndex: Int?
     var shakeBlankIndex: Int?
     var lastPlacedIndex: Int?
+    var coachActiveBlank: Bool = false
     /// When nil, size is derived from the board's GeometryReader.
     var tokenSize: CGFloat? = nil
 
@@ -24,28 +25,33 @@ struct PatternRibbon: View {
     }
 
     var body: some View {
-        GeometryReader { geo in
-            let size = resolvedTokenSize(in: geo.size)
-            let spacing = size * 0.16
+        // GeometryReader's ideal height is ~10pt; clear+overlay claims the VStack flex space.
+        Color.clear
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .overlay {
+                GeometryReader { geo in
+                    let size = resolvedTokenSize(in: geo.size)
+                    let spacing = size * 0.14
 
-            ZStack {
-                parkingLot(cornerRadius: min(geo.size.width, geo.size.height) * 0.08)
+                    ZStack {
+                        parkingLot(cornerRadius: min(geo.size.width, geo.size.height) * 0.06)
 
-                VStack(spacing: spacing) {
-                    ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
-                        HStack(spacing: spacing) {
-                            ForEach(row, id: \.index) { item in
-                                slotView(index: item.index, slot: item.slot, size: size)
+                        VStack(spacing: spacing) {
+                            ForEach(Array(rows.enumerated()), id: \.offset) { _, row in
+                                HStack(spacing: spacing) {
+                                    ForEach(row, id: \.index) { item in
+                                        slotView(index: item.index, slot: item.slot, size: size)
+                                    }
+                                }
                             }
                         }
+                        .padding(size * 0.16)
                     }
+                    .frame(width: geo.size.width, height: geo.size.height)
                 }
-                .padding(size * 0.28)
             }
-            .frame(width: geo.size.width, height: geo.size.height)
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel("Toy garage board, \(rows.count) rows")
+            .accessibilityElement(children: .contain)
+            .accessibilityLabel("Toy garage board, \(rows.count) rows")
     }
 
     private func resolvedTokenSize(in boardSize: CGSize) -> CGFloat {
@@ -71,7 +77,8 @@ struct PatternRibbon: View {
             BlankSlotView(
                 size: size,
                 isActive: activeBlankIndex == index,
-                isShaking: shakeBlankIndex == index
+                isShaking: shakeBlankIndex == index,
+                isCoachTarget: coachActiveBlank && activeBlankIndex == index
             )
         }
     }
@@ -110,7 +117,6 @@ struct PatternRibbon: View {
                 .frame(height: 52)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
-            .shadow(color: Color.black.opacity(0.35), radius: 18, y: 10)
-            .shadow(color: Color.black.opacity(0.12), radius: 3, y: 1)
+            .shadow(color: Color.black.opacity(0.28), radius: 14, y: 8)
     }
 }

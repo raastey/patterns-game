@@ -5,6 +5,7 @@ struct HomeView: View {
     let onPlay: () -> Void
     let onLevels: () -> Void
     let onStickers: () -> Void
+    let onSettings: () -> Void
 
     @State private var bob = false
     @State private var appear = false
@@ -90,6 +91,24 @@ struct HomeView: View {
 
     private var toolbar: some View {
         HStack(spacing: 8) {
+            Button {
+                SoundPlayer.shared.playTap()
+                onSettings()
+            } label: {
+                Image(systemName: "person.crop.circle")
+                    .font(.system(size: 18, weight: .semibold))
+                    .foregroundStyle(AppTheme.ink)
+                    .frame(width: 44, height: 44)
+                    .background {
+                        Circle()
+                            .fill(.ultraThinMaterial)
+                            .overlay { Circle().fill(Color.white.opacity(0.3)) }
+                            .overlay { Circle().strokeBorder(Color.white.opacity(0.5), lineWidth: 1) }
+                    }
+            }
+            .buttonStyle(PremiumPressStyle())
+            .accessibilityLabel("Grown-ups settings")
+
             Spacer()
             MuteButton()
             HapticsButton()

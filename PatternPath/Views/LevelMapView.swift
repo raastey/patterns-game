@@ -163,8 +163,12 @@ struct LevelCard: View {
                         .overlay {
                             Circle()
                                 .strokeBorder(
-                                    unlocked ? AppTheme.accent.opacity(0.25) : Color.clear,
-                                    lineWidth: 1.5
+                                    unlocked
+                                        ? (stars > 0 && stars < 3
+                                            ? AppTheme.star.opacity(0.85)
+                                            : AppTheme.accent.opacity(0.25))
+                                        : Color.clear,
+                                    lineWidth: stars > 0 && stars < 3 ? 2.5 : 1.5
                                 )
                         }
 
@@ -210,6 +214,10 @@ struct LevelCard: View {
         .buttonStyle(PremiumPressStyle())
         .disabled(!unlocked)
         .accessibilityLabel("Level \(level.id), \(level.title)")
-        .accessibilityValue(unlocked ? "\(stars) stars" : "Locked")
+        .accessibilityValue(
+            unlocked
+                ? (stars > 0 && stars < 3 ? "\(stars) stars, try for 3" : "\(stars) stars")
+                : "Locked"
+        )
     }
 }

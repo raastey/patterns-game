@@ -36,6 +36,7 @@ struct BlankSlotView: View {
     var size: CGFloat = 72
     var isActive: Bool = false
     var isShaking: Bool = false
+    var isCoachTarget: Bool = false
 
     @State private var pulse = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -54,16 +55,22 @@ struct BlankSlotView: View {
                         )
                         .foregroundStyle(
                             isActive
-                                ? AnyShapeStyle(AppTheme.trayLine)
+                                ? AnyShapeStyle(isCoachTarget ? AppTheme.accent : AppTheme.trayLine)
                                 : AnyShapeStyle(Color.white.opacity(0.35))
                         )
                 }
-                .shadow(color: isActive ? AppTheme.trayLine.opacity(0.45) : .clear, radius: 12, y: 4)
+                .shadow(
+                    color: isActive
+                        ? (isCoachTarget ? AppTheme.accent : AppTheme.trayLine).opacity(0.45)
+                        : .clear,
+                    radius: 12,
+                    y: 4
+                )
 
             if isActive {
                 Image(systemName: "plus")
                     .font(.system(size: size * 0.28, weight: .bold, design: .rounded))
-                    .foregroundStyle(AppTheme.trayLine.opacity(0.9))
+                    .foregroundStyle((isCoachTarget ? AppTheme.accent : AppTheme.trayLine).opacity(0.9))
                     .scaleEffect(pulse ? 1.08 : 0.92)
             }
         }
@@ -78,7 +85,11 @@ struct BlankSlotView: View {
         )
         .onAppear { startPulseIfNeeded() }
         .onChange(of: isActive) { _, _ in startPulseIfNeeded() }
-        .accessibilityLabel(isActive ? "Empty parking spot" : "Empty spot")
+        .accessibilityLabel(
+            isCoachTarget
+                ? "Empty parking spot, park here next"
+                : (isActive ? "Empty parking spot, next" : "Empty parking spot")
+        )
     }
 
     private func startPulseIfNeeded() {

@@ -5,6 +5,7 @@ struct CelebrationView: View {
     let stars: Int
     let hasNext: Bool
     var newSticker: GarageSticker? = nil
+    var completedWorldID: Int? = nil
     var worldFill: Double = 0
     let onNext: () -> Void
     let onMap: () -> Void
@@ -19,6 +20,7 @@ struct CelebrationView: View {
 
     private var isShort: Bool { verticalSizeClass == .compact }
     private var theme: WorldTheme { level.theme }
+    private var wantsThreeStars: Bool { stars < 3 }
 
     var body: some View {
         ZStack {
@@ -35,6 +37,10 @@ struct CelebrationView: View {
                 VStack(spacing: isShort ? 10 : 16) {
                     garageBayScene
                         .padding(.bottom, isShort ? 2 : 4)
+
+                    if let completedWorldID {
+                        worldCompleteBanner(WorldTheme.forWorld(completedWorldID))
+                    }
 
                     Text(level.winLine)
                         .font(.display(isShort ? 24 : 30, weight: .heavy))
@@ -70,11 +76,32 @@ struct CelebrationView: View {
                         }
                     }
                     .padding(.vertical, isShort ? 2 : 4)
+                    .accessibilityElement(children: .ignore)
+                    .accessibilityLabel("\(stars) of 3 stars")
+
+                    if wantsThreeStars {
+                        Text("Almost! Try again for 3 stars.")
+                            .font(.bodyRounded(isShort ? 14 : 16, weight: .semibold))
+                            .foregroundStyle(AppTheme.accentDeep)
+                            .multilineTextAlignment(.center)
+                    }
 
                     worldFillChip
 
                     VStack(spacing: 10) {
-                        if hasNext {
+                        if wantsThreeStars {
+                            PrimaryCTA(title: "Try for 3 Stars", systemImage: "star.fill") {
+                                SoundPlayer.shared.playTap()
+                                onReplay()
+                            }
+                            if hasNext {
+                                SecondaryCTA(title: "Next Level", systemImage: "arrow.right") {
+                                    SoundPlayer.shared.playTap()
+                                    HapticsPlayer.shared.unlock()
+                                    onNext()
+                                }
+                            }
+                        } else if hasNext {
                             PrimaryCTA(title: "Next Level", systemImage: "arrow.right") {
                                 SoundPlayer.shared.playTap()
                                 HapticsPlayer.shared.unlock()
@@ -83,8 +110,10 @@ struct CelebrationView: View {
                         }
 
                         HStack(spacing: 10) {
-                            SecondaryCTA(title: "Again", systemImage: "arrow.counterclockwise") {
-                                onReplay()
+                            if !wantsThreeStars {
+                                SecondaryCTA(title: "Again", systemImage: "arrow.counterclockwise") {
+                                    onReplay()
+                                }
                             }
                             SecondaryCTA(title: "Levels", systemImage: "square.grid.2x2") {
                                 onMap()
@@ -136,6 +165,7 @@ struct CelebrationView: View {
                 .animation(Motion.softSpring, value: carParked)
         }
         .padding(.horizontal, 4)
+        .accessibilityHidden(true)
     }
 
     private var worldFillChip: some View {
@@ -151,6 +181,27 @@ struct CelebrationView: View {
         .padding(.vertical, 7)
         .background {
             Capsule().fill(AppTheme.ink.opacity(0.06))
+        }
+    }
+
+    private func worldCompleteBanner(_ world: WorldTheme) -> some View {
+        HStack(spacing: 10) {
+            Image(systemName: "flag.checkered")
+                .font(.system(size: 16, weight: .bold))
+                .foregroundStyle(world.lamp)
+            Text("\(world.title) complete!")
+                .font(.bodyRounded(isShort ? 15 : 17, weight: .bold))
+                .foregroundStyle(AppTheme.ink)
+            Spacer(minLength: 0)
+        }
+        .padding(12)
+        .background {
+            RoundedRectangle(cornerRadius: 16, style: .continuous)
+                .fill(world.lamp.opacity(0.16))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16, style: .continuous)
+                        .strokeBorder(world.lamp.opacity(0.35), lineWidth: 1)
+                }
         }
     }
 

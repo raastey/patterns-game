@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MuteButton: View {
-    private let sound = SoundPlayer.shared
+    private var sound = SoundPlayer.shared
 
     var body: some View {
         Button {

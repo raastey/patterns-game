@@ -9,7 +9,6 @@ import UIKit
 final class HapticsPlayer {
     static let shared = HapticsPlayer()
 
-    private let enabledKey = "patternpath.hapticsEnabled"
     private var engine: CHHapticEngine?
     private var supportsCoreHaptics = false
 
@@ -28,7 +27,7 @@ final class HapticsPlayer {
 
     var isEnabled: Bool {
         didSet {
-            UserDefaults.standard.set(isEnabled, forKey: enabledKey)
+            UserDefaults.standard.set(isEnabled, forKey: UserDefaultsKeys.hapticsEnabled)
             if isEnabled {
                 warmUp()
                 DispatchQueue.main.async { [weak self] in
@@ -40,10 +39,10 @@ final class HapticsPlayer {
 
     private init() {
         supportsCoreHaptics = CHHapticEngine.capabilitiesForHardware().supportsHaptics
-        if UserDefaults.standard.object(forKey: enabledKey) == nil {
+        if UserDefaults.standard.object(forKey: UserDefaultsKeys.hapticsEnabled) == nil {
             _isEnabled = true
         } else {
-            _isEnabled = UserDefaults.standard.bool(forKey: enabledKey)
+            _isEnabled = UserDefaults.standard.bool(forKey: UserDefaultsKeys.hapticsEnabled)
         }
         warmUp()
     }
