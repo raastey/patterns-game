@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
+	<key>CFBundleDisplayName</key>
+	<string>Pattern Path</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -14,19 +16,17 @@
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleDisplayName</key>
-	<string>Pattern Path</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
-	<string>1</string>
+	<string>2</string>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
 		<string>AccentColor</string>
 	</dict>
-	<key>ITSAppUsesNonExemptEncryption</key>
-	<false/>
 	<key>UIRequiresFullScreen</key>
 	<true/>
 	<key>UISupportedInterfaceOrientations</key>
