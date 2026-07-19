@@ -3,6 +3,7 @@ import SwiftUI
 struct PlayView: View {
     @Environment(ProgressStore.self) private var progress
     @State private var session: GameSession
+    @State private var newSticker: GarageSticker?
     let onExit: () -> Void
     let onNextLevel: (Int) -> Void
     let onMap: () -> Void
@@ -17,9 +18,11 @@ struct PlayView: View {
         self.onMap = onMap
     }
 
+    private var theme: WorldTheme { session.level.theme }
+
     var body: some View {
         ZStack {
-            SkyBackground()
+            SkyBackground(theme: theme)
 
             AdaptiveReader { layout in
                 playBody(layout)
@@ -33,9 +36,12 @@ struct PlayView: View {
                     level: session.level,
                     stars: session.starsEarned(),
                     hasNext: session.level.id < LevelCatalog.totalCount,
+                    newSticker: newSticker,
+                    worldFill: progress.worldFill(worldID: session.level.world),
                     onNext: { onNextLevel(session.level.id + 1) },
                     onMap: onMap,
                     onReplay: {
+                        newSticker = nil
                         session = GameSession(level: session.level)
                         appear = false
                         DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
@@ -55,12 +61,12 @@ struct PlayView: View {
         .onChange(of: session.phase) { _, phase in
             if phase == .celebrating {
                 let previousUnlocked = progress.highestUnlocked
-                progress.recordClear(
+                newSticker = progress.recordClear(
                     levelID: session.level.id,
                     stars: session.level.starsToEarn,
                     mistakes: session.mistakes
                 )
-                if progress.highestUnlocked > previousUnlocked {
+                if progress.highestUnlocked > previousUnlocked || newSticker != nil {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.55) {
                         HapticsPlayer.shared.unlock()
                     }
@@ -75,11 +81,12 @@ struct PlayView: View {
         VStack(spacing: layout.isShortLandscape ? 8 : 12) {
             topBar(layout)
             titleLine(layout)
+            missionChip(layout)
 
-            // Garage board claims all remaining height
             PatternRibbon(
                 slots: session.slots,
                 columns: session.level.columns,
+                theme: theme,
                 activeBlankIndex: activeBlankIndex,
                 shakeBlankIndex: session.shakeBlankIndex,
                 lastPlacedIndex: session.lastPlacedIndex,
@@ -127,7 +134,7 @@ struct PlayView: View {
 
             Spacer(minLength: 4)
 
-            StatusChip(text: "Level \(session.level.id)")
+            StatusChip(text: "\(theme.title) · \(session.level.id)")
 
             Spacer(minLength: 4)
 
@@ -150,15 +157,32 @@ struct PlayView: View {
 
             FocusBadge(focus: session.level.focus)
 
-            if !layout.isShortLandscape && !layout.isCompactWidth {
-                Text(session.level.subtitle)
-                    .font(.bodyRounded(15, weight: .medium))
-                    .foregroundStyle(AppTheme.inkSoft)
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.8)
-            }
-
             Spacer(minLength: 0)
+        }
+        .opacity(appear ? 1 : 0)
+    }
+
+    private func missionChip(_ layout: AdaptiveLayout) -> some View {
+        HStack(spacing: 8) {
+            Image(systemName: "flag.fill")
+                .font(.system(size: layout.isShortLandscape ? 11 : 12, weight: .bold))
+                .foregroundStyle(theme.lamp)
+            Text(session.level.missionLine)
+                .font(.bodyRounded(layout.isShortLandscape ? 13 : 15, weight: .semibold))
+                .foregroundStyle(AppTheme.inkSoft)
+                .lineLimit(layout.isShortLandscape ? 1 : 2)
+                .minimumScaleFactor(0.8)
+            Spacer(minLength: 0)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, layout.isShortLandscape ? 7 : 9)
+        .background {
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .fill(Color.white.opacity(0.55))
+                .overlay {
+                    RoundedRectangle(cornerRadius: 14, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.45), lineWidth: 1)
+                }
         }
         .opacity(appear ? 1 : 0)
     }

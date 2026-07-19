@@ -7,7 +7,7 @@ struct LevelMapView: View {
 
     var body: some View {
         ZStack {
-            SkyBackground()
+            SkyBackground(theme: WorldTheme.forLevelID(max(1, progress.highestUnlocked)))
 
             AdaptiveReader { layout in
                 VStack(spacing: 0) {
@@ -18,6 +18,10 @@ struct LevelMapView: View {
 
                     ScrollView {
                         LazyVStack(alignment: .leading, spacing: layout.isShortLandscape ? 14 : 22) {
+                            GarageBaysView(compact: layout.isShortLandscape)
+                                .padding(layout.isShortLandscape ? 12 : 16)
+                                .glassSurface(cornerRadius: 22, intense: false)
+
                             ForEach(worlds, id: \.id) { world in
                                 worldSection(world, layout: layout)
                             }
@@ -65,6 +69,8 @@ struct LevelMapView: View {
                 spacing: 12
             )
         ]
+        let theme = WorldTheme.forWorld(world.id)
+        let filled = progress.clearedCount(inWorld: world.id)
 
         return VStack(alignment: .leading, spacing: 14) {
             HStack(spacing: 10) {
@@ -72,14 +78,21 @@ struct LevelMapView: View {
                     .font(.display(layout.isShortLandscape ? 18 : 22, weight: .bold))
                     .foregroundStyle(AppTheme.ink)
 
-                Text("\(world.levels.first?.id ?? 0)–\(world.levels.last?.id ?? 0)")
+                Text("\(filled)/10")
                     .font(.captionRounded(12))
-                    .foregroundStyle(AppTheme.inkFaint)
+                    .foregroundStyle(AppTheme.ink)
                     .padding(.horizontal, 10)
                     .padding(.vertical, 4)
                     .background {
-                        Capsule().fill(AppTheme.ink.opacity(0.06))
+                        Capsule().fill(theme.lamp.opacity(0.22))
                     }
+
+                Text(theme.tagline)
+                    .font(.captionRounded(11))
+                    .foregroundStyle(AppTheme.inkFaint)
+                    .lineLimit(1)
+
+                Spacer(minLength: 0)
             }
 
             LazyVGrid(columns: columns, spacing: 12) {
@@ -98,7 +111,19 @@ struct LevelMapView: View {
             }
         }
         .padding(layout.isShortLandscape ? 14 : (layout.isCompactWidth ? 16 : 22))
-        .glassSurface(cornerRadius: 28, intense: false)
+        .background {
+            RoundedRectangle(cornerRadius: 28, style: .continuous)
+                .fill(.ultraThinMaterial)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .fill(theme.skyMid.opacity(0.16))
+                }
+                .overlay {
+                    RoundedRectangle(cornerRadius: 28, style: .continuous)
+                        .strokeBorder(Color.white.opacity(0.5), lineWidth: 1)
+                }
+                .shadow(color: AppTheme.ink.opacity(0.08), radius: 24, y: 10)
+        }
     }
 
     private var worlds: [WorldGroup] {
@@ -106,7 +131,7 @@ struct LevelMapView: View {
         let worldIDs = grouped.keys.sorted()
         return worldIDs.compactMap { id in
             guard let levels = grouped[id]?.sorted(by: { $0.id < $1.id }) else { return nil }
-            return WorldGroup(id: id, title: levels[0].worldTitle, levels: levels)
+            return WorldGroup(id: id, title: WorldTheme.forWorld(id).title, levels: levels)
         }
     }
 }

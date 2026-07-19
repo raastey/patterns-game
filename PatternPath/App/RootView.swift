@@ -3,6 +3,7 @@ import SwiftUI
 enum AppRoute: Equatable {
     case home
     case levels
+    case stickers
     case play(Int)
 }
 
@@ -16,7 +17,8 @@ struct RootView: View {
             case .home:
                 HomeView(
                     onPlay: { navigate(to: .play(progress.highestUnlocked)) },
-                    onLevels: { navigate(to: .levels) }
+                    onLevels: { navigate(to: .levels) },
+                    onStickers: { navigate(to: .stickers) }
                 )
                 .transition(pageTransition)
 
@@ -26,6 +28,10 @@ struct RootView: View {
                     onBack: { navigate(to: .home) }
                 )
                 .transition(pageTransition)
+
+            case .stickers:
+                StickerCollectionView(onClose: { navigate(to: .home) })
+                    .transition(pageTransition)
 
             case .play(let id):
                 if let level = LevelCatalog.level(id: id) {

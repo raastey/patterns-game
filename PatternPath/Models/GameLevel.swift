@@ -28,25 +28,9 @@ struct GameLevel: Identifiable, Hashable {
         Int(ceil(Double(slots.count) / Double(max(columns, 1))))
     }
 
-    var world: Int {
-        switch id {
-        case 1...10: 1
-        case 11...20: 2
-        case 21...30: 3
-        case 31...40: 4
-        default: 5
-        }
-    }
+    var world: Int { Self.worldID(for: id) }
 
-    var worldTitle: String {
-        switch world {
-        case 1: "Color Garage"
-        case 2: "Toy Parade"
-        case 3: "Color Missions"
-        case 4: "Toy Missions"
-        default: "Super Garage"
-        }
-    }
+    var worldTitle: String { WorldTheme.forWorld(world).title }
 }
 
 enum LevelCatalog {

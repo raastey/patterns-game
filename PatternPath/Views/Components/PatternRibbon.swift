@@ -3,6 +3,7 @@ import SwiftUI
 struct PatternRibbon: View {
     let slots: [PatternSlot]
     var columns: Int = 3
+    var theme: WorldTheme = .colorGarage
     var activeBlankIndex: Int?
     var shakeBlankIndex: Int?
     var lastPlacedIndex: Int?
@@ -77,12 +78,11 @@ struct PatternRibbon: View {
 
     private func parkingLot(cornerRadius: CGFloat) -> some View {
         RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
-            .fill(AppTheme.trayGradient)
+            .fill(theme.trayGradient)
             .overlay {
-                // Lane dashes
                 RoundedRectangle(cornerRadius: cornerRadius * 0.85, style: .continuous)
                     .strokeBorder(
-                        AppTheme.trayLine.opacity(0.35),
+                        theme.laneLine.opacity(0.38),
                         style: StrokeStyle(lineWidth: 3, dash: [10, 8])
                     )
                     .padding(14)
@@ -102,13 +102,12 @@ struct PatternRibbon: View {
                     )
             }
             .overlay(alignment: .top) {
-                // Shop overhead highlight
                 LinearGradient(
-                    colors: [Color.white.opacity(0.18), Color.clear],
+                    colors: [theme.lamp.opacity(0.22), Color.clear],
                     startPoint: .top,
                     endPoint: .bottom
                 )
-                .frame(height: 48)
+                .frame(height: 52)
                 .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
             }
             .shadow(color: Color.black.opacity(0.35), radius: 18, y: 10)

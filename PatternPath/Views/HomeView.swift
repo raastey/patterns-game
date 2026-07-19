@@ -4,14 +4,19 @@ struct HomeView: View {
     @Environment(ProgressStore.self) private var progress
     let onPlay: () -> Void
     let onLevels: () -> Void
+    let onStickers: () -> Void
 
     @State private var bob = false
     @State private var appear = false
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    private var theme: WorldTheme {
+        WorldTheme.forLevelID(max(1, progress.highestUnlocked))
+    }
+
     var body: some View {
         ZStack {
-            SkyBackground()
+            SkyBackground(theme: theme)
 
             AdaptiveReader { layout in
                 ScrollView(showsIndicators: false) {
@@ -41,14 +46,18 @@ struct HomeView: View {
     }
 
     private func portraitContent(_ layout: AdaptiveLayout) -> some View {
-        VStack(spacing: layout.isCompactWidth ? 26 : 34) {
+        VStack(spacing: layout.isCompactWidth ? 22 : 28) {
             toolbar
             brandBlock(layout)
                 .opacity(appear ? 1 : 0)
                 .offset(y: appear ? 0 : 24)
+            garageProgress(layout)
+                .opacity(appear ? 1 : 0)
             heroPath(layout)
                 .opacity(appear ? 1 : 0)
                 .scaleEffect(appear ? 1 : 0.94)
+            StickerStripView(compact: layout.isCompactWidth, onOpen: onStickers)
+                .opacity(appear ? 1 : 0)
             actions(layout)
                 .frame(maxWidth: layout.isCompactWidth ? .infinity : 420)
                 .opacity(appear ? 1 : 0)
@@ -57,12 +66,16 @@ struct HomeView: View {
     }
 
     private func landscapeContent(_ layout: AdaptiveLayout) -> some View {
-        VStack(spacing: layout.isShortLandscape ? 12 : 20) {
+        VStack(spacing: layout.isShortLandscape ? 10 : 16) {
             toolbar
-            HStack(alignment: .center, spacing: layout.isShortLandscape ? 20 : 36) {
-                brandBlock(layout)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .opacity(appear ? 1 : 0)
+            HStack(alignment: .center, spacing: layout.isShortLandscape ? 18 : 32) {
+                VStack(alignment: .leading, spacing: layout.isShortLandscape ? 10 : 16) {
+                    brandBlock(layout)
+                    garageProgress(layout)
+                    StickerStripView(compact: true, onOpen: onStickers)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .opacity(appear ? 1 : 0)
 
                 VStack(spacing: layout.isShortLandscape ? 12 : 18) {
                     heroPath(layout)
@@ -101,14 +114,26 @@ struct HomeView: View {
                 .lineLimit(1)
 
             Text(layout.isShortLandscape
-                 ? "Park the vehicles. One thing at a time."
-                 : "Classics, buses, trucks, rescue.\nOne thing to watch at a time.")
+                 ? "Tiny garage missions. One thing at a time."
+                 : "Park the toys. Fill the garage.\nOne thing to watch at a time.")
                 .font(.bodyRounded(layout.isShortLandscape ? 16 : (layout.isCompactWidth ? 18 : 21), weight: .medium))
                 .foregroundStyle(AppTheme.inkSoft)
                 .multilineTextAlignment(layout.isLandscape ? .leading : .center)
                 .lineSpacing(2)
         }
         .frame(maxWidth: .infinity, alignment: layout.isLandscape ? .leading : .center)
+    }
+
+    private func garageProgress(_ layout: AdaptiveLayout) -> some View {
+        VStack(alignment: layout.isLandscape ? .leading : .center, spacing: 8) {
+            Text("Your garage")
+                .font(.bodyRounded(layout.isShortLandscape ? 13 : 15, weight: .bold))
+                .foregroundStyle(AppTheme.ink)
+            GarageBaysView(compact: layout.isShortLandscape || layout.isCompactWidth)
+        }
+        .padding(layout.isShortLandscape ? 12 : 16)
+        .frame(maxWidth: .infinity, alignment: layout.isLandscape ? .leading : .center)
+        .glassSurface(cornerRadius: 22, intense: false)
     }
 
     private func heroPath(_ layout: AdaptiveLayout) -> some View {
@@ -131,12 +156,12 @@ struct HomeView: View {
         .padding(.vertical, bead * 0.36)
         .background {
             RoundedRectangle(cornerRadius: bead * 0.45, style: .continuous)
-                .fill(AppTheme.trayGradient)
+                .fill(theme.trayGradient)
                 .overlay {
                     RoundedRectangle(cornerRadius: bead * 0.45, style: .continuous)
                         .fill(
                             LinearGradient(
-                                colors: [Color.white.opacity(0.3), Color.clear],
+                                colors: [theme.lamp.opacity(0.22), Color.clear],
                                 startPoint: .top,
                                 endPoint: .bottom
                             )
@@ -146,7 +171,7 @@ struct HomeView: View {
                     RoundedRectangle(cornerRadius: bead * 0.45, style: .continuous)
                         .strokeBorder(Color.white.opacity(0.45), lineWidth: 1.2)
                 }
-                .shadow(color: AppTheme.trayDeep.opacity(0.3), radius: 16, y: 10)
+                .shadow(color: theme.trayDeep.opacity(0.35), radius: 16, y: 10)
         }
     }
 
@@ -195,7 +220,7 @@ struct HomeView: View {
             }
 
             StatusChip(
-                text: "\(progress.totalStars) stars · 50 levels",
+                text: "\(progress.totalStars) stars · \(progress.clearedLevelCount)/50 parked",
                 systemImage: "star.fill",
                 tint: AppTheme.star
             )
