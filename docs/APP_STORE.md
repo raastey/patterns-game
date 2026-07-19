@@ -42,20 +42,43 @@ Engineering for **v1.0.0** is closed. Human UAT, screenshots, and App Store Conn
 8. Mute works; Reduce Motion on/off
 9. `./scripts/verify.sh` passes
 
-## Archive and upload
+## Bundle (IPA)
+
+Already exported and distribution-signed:
+
+- `build/export/PatternPath.ipa` (also copied to `~/Desktop/PatternPath-1.0.0.ipa`)
+- Bundle ID: `fun.raastey.patternpath` (registered in Developer portal)
+- Signing: Apple Distribution · Team `P3UCBA6NAQ`
+- Version / build: `1.0.0` / `1`
+
+### One-time App Store Connect step (browser)
+
+API keys cannot create apps. Create the record once:
+
+1. Open [App Store Connect → My Apps → +](https://appstoreconnect.apple.com/apps)
+2. **New App**
+3. Platforms: iOS  
+   Name: Pattern Path  
+   Primary language: English (U.S.)  
+   Bundle ID: `fun.raastey.patternpath`  
+   SKU: `fun.raastey.patternpath`  
+   User Access: Full Access
+4. Create
+
+Then either:
+
+- Drop `~/Desktop/PatternPath-1.0.0.ipa` into **Transporter**, or
+- Ask the agent: `./scripts/testflight-upload.sh --upload-only`
+
+### Re-export / re-upload later
 
 ```bash
 cd patterns-game
-xcodegen generate
-open PatternPath.xcodeproj
+./scripts/testflight-upload.sh              # archive + export + upload
+./scripts/testflight-upload.sh --upload-only
 ```
 
-In Xcode:
-
-1. Select **Any iOS Device (arm64)**
-2. Product → Archive
-3. Distribute App → App Store Connect → Upload
-4. Wait for processing in App Store Connect
+Or in Xcode: Any iOS Device → Product → Archive → Distribute → App Store Connect.
 
 ## App Store Connect copy (paste)
 

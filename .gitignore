@@ -10,3 +10,6 @@ xcuserdata/
 *.dSYM
 .swiftpm/
 .claude/
+asc.env
+AuthKey_*.p8
+.derivedData/
