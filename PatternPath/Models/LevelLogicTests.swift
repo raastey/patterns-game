@@ -84,11 +84,75 @@ enum LevelLogicTests {
                 print("FAIL level \(level.id): expected multi-row board, got \(level.rowCount) row(s)")
                 ok = false
             }
+
+            if !patternIsReadable(level) {
+                ok = false
+            }
         }
 
         if ok {
             print("LevelLogicTests passed: \(LevelCatalog.totalCount) unique toy garage levels")
         }
         return ok
+    }
+
+    /// Every level must show one full pattern unit before any blank (or the outbound half of a mirror).
+    private static func patternIsReadable(_ level: GameLevel) -> Bool {
+        var intended: [PatternToken] = []
+        var answerIndex = 0
+        var blankMask: [Bool] = []
+        for slot in level.slots {
+            switch slot {
+            case .filled(let token):
+                intended.append(token)
+                blankMask.append(false)
+            case .blank:
+                guard answerIndex < level.answers.count else {
+                    print("FAIL level \(level.id): blank without answer")
+                    return false
+                }
+                intended.append(level.answers[answerIndex])
+                answerIndex += 1
+                blankMask.append(true)
+            }
+        }
+
+        let keys: [String] = intended.map { token in
+            switch level.focus {
+            case .color: token.hue.rawValue
+            case .toy: token.toy.rawValue
+            }
+        }
+
+        if let period = shortestPeriod(keys) {
+            if blankMask.prefix(period).contains(true) {
+                print("FAIL level \(level.id): blank inside first cycle (period \(period))")
+                return false
+            }
+            return true
+        }
+
+        if keys == Array(keys.reversed()), keys.count >= 4 {
+            let half = keys.count / 2
+            if blankMask.prefix(half).contains(true) {
+                print("FAIL level \(level.id): blank inside mirror outbound half")
+                return false
+            }
+            return true
+        }
+
+        print("FAIL level \(level.id): sequence has no clear repeating unit")
+        return false
+    }
+
+    private static func shortestPeriod(_ keys: [String]) -> Int? {
+        let n = keys.count
+        guard n >= 2 else { return nil }
+        for period in 1...(n / 2) {
+            if (0..<n).allSatisfy({ keys[$0] == keys[$0 % period] }) {
+                return period
+            }
+        }
+        return nil
     }
 }

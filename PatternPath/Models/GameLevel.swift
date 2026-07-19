@@ -158,7 +158,6 @@ enum LevelCatalog {
 
     private static func makeLevels() -> [GameLevel] {
         let race = ToyKind.raceCar
-        let sedan = ToyKind.sedan
         let sportSedan = ToyKind.sportsSedan
         let hatch = ToyKind.hatchback
         let coupe = ToyKind.coupe
@@ -201,8 +200,9 @@ enum LevelCatalog {
         let F = false
         let B = true
 
+        // Rule: show at least one full pattern unit with no blanks, then blank only later repeats.
         return [
-            // MARK: World 1 — Color Garage
+            // MARK: World 1 — Color Garage (AB / AABB / ABC, end blanks)
             colorLevel(1, title: "Race Car Rally", subtitle: "What color comes next?",
                        toy: race, hues: [coral, teal, coral, teal, coral, teal],
                        blankMask: [F, F, F, F, F, B], choiceHues: [teal, sun]),
@@ -215,34 +215,33 @@ enum LevelCatalog {
                        toy: bus, hues: [mint, mint, coral, coral, mint, mint, coral, coral],
                        blankMask: [F, F, F, F, F, F, B, B], choiceHues: [coral, mint, sun]),
 
-            colorLevel(4, title: "Topolino Rainbow", subtitle: "Three colors take turns",
+            colorLevel(4, title: "Topolino Turn", subtitle: "Three colors take turns",
                        toy: topolino, hues: [teal, apri, peri, teal, apri, peri],
                        blankMask: [F, F, F, F, F, B], choiceHues: [peri, sun, mint]),
 
-            colorLevel(5, title: "Jeep Gap", subtitle: "Which color belongs here?",
+            colorLevel(5, title: "Jeep Again", subtitle: "Keep the AB rolling",
                        toy: jeep, hues: [apri, teal, apri, teal, apri, teal],
-                       blankMask: [F, F, F, B, F, F], choiceHues: [teal, mint, peri]),
+                       blankMask: [F, F, F, F, B, B], choiceHues: [apri, teal, mint]),
 
             colorLevel(6, title: "Ambulance Pairs", subtitle: "A pair, then a new color",
                        toy: ambo, hues: [mint, mint, coral, mint, mint, coral],
-                       blankMask: [F, F, F, F, F, B], choiceHues: [coral, mint, teal]),
+                       blankMask: [F, F, F, F, B, B], choiceHues: [mint, coral, teal]),
 
-            colorLevel(7, title: "Pickup Bounce", subtitle: "Find the missing bounce",
-                       toy: pickup, hues: [coral, sun, coral, sun, coral, sun, coral, sun, coral],
-                       blankMask: [F, F, F, F, B, F, F, F, F], choiceHues: [coral, sun, teal],
-                       columns: 3),
+            colorLevel(7, title: "Pickup Bounce", subtitle: "Finish the bounce",
+                       toy: pickup, hues: [coral, sun, coral, sun, coral, sun],
+                       blankMask: [F, F, F, F, B, B], choiceHues: [coral, sun, teal]),
 
             colorLevel(8, title: "Classic Wave", subtitle: "Finish both colors",
                        toy: classic, hues: [apri, peri, apri, peri, apri, peri],
                        blankMask: [F, F, F, F, B, B], choiceHues: [apri, peri, sun, mint]),
 
-            colorLevel(9, title: "Coupe Climb", subtitle: "Climb the warm colors",
+            colorLevel(9, title: "Coupe Climb", subtitle: "Warm colors again",
                        toy: coupe, hues: [coral, apri, sun, coral, apri, sun],
-                       blankMask: [F, F, B, F, B, F], choiceHues: [apri, sun, mint, peri]),
+                       blankMask: [F, F, F, F, B, B], choiceHues: [apri, sun, mint, peri]),
 
-            colorLevel(10, title: "Fire Truck Cool", subtitle: "Two cool colors to park",
+            colorLevel(10, title: "Fire Truck Cool", subtitle: "Cool colors again",
                        toy: fire, hues: [mint, teal, peri, mint, teal, peri],
-                       blankMask: [F, F, F, B, F, B], choiceHues: [peri, mint, coral, sun]),
+                       blankMask: [F, F, F, F, B, B], choiceHues: [mint, teal, peri, coral]),
 
             // MARK: World 2 — Toy Parade
             toyLevel(11, title: "Street Parade", subtitle: "What vehicle comes next?",
@@ -257,174 +256,176 @@ enum LevelCatalog {
                      hue: mint, toys: [dump, dump, box, box, dump, dump, box, box],
                      blankMask: [F, F, F, F, F, F, B, B], choiceToys: [box, dump, tanker, semi]),
 
-            toyLevel(14, title: "Rescue Dance", subtitle: "Find the missing rescue",
+            toyLevel(14, title: "Rescue Dance", subtitle: "Keep the rescue rolling",
                      hue: coral, toys: [fire, police, fire, police, fire, police],
-                     blankMask: [F, F, F, B, F, F], choiceToys: [police, ambo, jeep, taxi]),
+                     blankMask: [F, F, F, F, B, B], choiceToys: [fire, police, ambo, jeep]),
 
-            toyLevel(15, title: "Yard Gap", subtitle: "Two spots to fill",
+            toyLevel(15, title: "Yard Parade", subtitle: "Loader, carrier, again",
                      hue: teal, toys: [loader, carrier, loader, carrier, loader, carrier],
-                     blankMask: [F, F, B, F, F, B], choiceToys: [carrier, loader, tractor, bus]),
+                     blankMask: [F, F, F, F, B, B], choiceToys: [loader, carrier, tractor, bus]),
 
             toyLevel(16, title: "City Hop", subtitle: "One taxi, then two buses",
                      hue: apri, toys: [taxi, bus, bus, taxi, bus, bus],
-                     blankMask: [F, B, F, F, B, F], choiceToys: [bus, taxi, city, wagon]),
+                     blankMask: [F, F, F, F, B, B], choiceToys: [bus, taxi, city, wagon]),
 
-            toyLevel(17, title: "Sport Pair", subtitle: "Pairs with a twist",
-                     hue: peri, toys: [sportSedan, sportSedan, hatch, sportSedan, sportSedan, hatch, sportSedan, sportSedan],
-                     blankMask: [F, F, F, F, B, F, B, F], choiceToys: [hatch, sportSedan, coupe, race]),
+            toyLevel(17, title: "Sport Pair", subtitle: "Two sports, then a hatch",
+                     hue: peri, toys: [sportSedan, sportSedan, hatch, sportSedan, sportSedan, hatch],
+                     blankMask: [F, F, F, F, B, B], choiceToys: [sportSedan, hatch, coupe, race]),
 
-            toyLevel(18, title: "Work Convoy", subtitle: "ABC across the yard",
+            toyLevel(18, title: "Work Convoy", subtitle: "Pickup, dump, garbage…",
                      hue: sun, toys: [pickup, dump, garbage, pickup, dump, garbage],
-                     blankMask: [F, F, F, B, F, B], choiceToys: [pickup, dump, garbage, tanker]),
+                     blankMask: [F, F, F, F, B, B], choiceToys: [dump, garbage, pickup, tanker]),
 
-            toyLevel(19, title: "Vehicle Quartet", subtitle: "Four vehicles — find two",
+            toyLevel(19, title: "Vehicle Quartet", subtitle: "Four vehicles, then again",
                      hue: mint, toys: [bus, fire, jeep, kart, bus, fire, jeep, kart],
-                     blankMask: [F, F, B, F, F, F, B, F], choiceToys: [jeep, kart, dump, rocket, fire]),
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [jeep, kart, dump, rocket, fire]),
 
-            toyLevel(20, title: "Ambulance Home", subtitle: "Repair both gaps",
+            toyLevel(20, title: "Ambulance Home", subtitle: "Ambulance, taxi, fire…",
                      hue: coral, toys: [ambo, taxi, fire, ambo, taxi, fire],
-                     blankMask: [F, B, F, F, B, F], choiceToys: [ambo, taxi, fire, police, bus]),
+                     blankMask: [F, F, F, F, B, B], choiceToys: [taxi, fire, ambo, police, bus]),
 
-            // MARK: World 3 — Color Missions
+            // MARK: World 3 — Color Missions (second-cycle blanks only)
             colorLevel(21, title: "Long Future Run", subtitle: "Hold the AB rhythm",
                        toy: future, hues: [coral, teal, coral, teal, coral, teal, coral, teal],
-                       blankMask: [F, F, B, F, F, B, F, F], choiceHues: [coral, teal, mint, sun]),
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [coral, teal, mint, sun]),
 
-            colorLevel(22, title: "Skip Bus Color", subtitle: "Which color was skipped?",
-                       toy: bus, hues: [sun, mint, peri, sun, mint, peri, sun, mint],
-                       blankMask: [F, F, F, F, B, F, F, B], choiceHues: [mint, peri, sun, coral]),
+            colorLevel(22, title: "Bus Trio", subtitle: "Three colors take turns",
+                       toy: bus, hues: [sun, mint, peri, sun, mint, peri, sun, mint, peri],
+                       blankMask: [F, F, F, F, F, F, B, B, B], choiceHues: [sun, mint, peri, coral],
+                       columns: 3),
 
-            colorLevel(23, title: "Two Jeep Gaps", subtitle: "Gaps that are far apart",
+            colorLevel(23, title: "Jeep Rhythm", subtitle: "Finish the second AB",
                        toy: jeep, hues: [apri, teal, apri, teal, apri, teal, apri, teal],
-                       blankMask: [F, B, F, F, F, B, F, F], choiceHues: [apri, teal, peri, mint]),
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [apri, teal, peri, mint]),
 
-            colorLevel(24, title: "Semi Sandwich", subtitle: "What sits in the middle?",
+            colorLevel(24, title: "Semi Sandwich", subtitle: "Coral, then two mints",
                        toy: semi, hues: [coral, mint, mint, coral, mint, mint, coral, mint, mint],
-                       blankMask: [F, B, F, F, B, F, F, F, B], choiceHues: [mint, coral, sun, peri],
+                       blankMask: [F, F, F, F, F, F, B, B, B], choiceHues: [coral, mint, sun, peri],
                        columns: 3),
 
-            colorLevel(25, title: "Police Pair Bridge", subtitle: "Pairs across the bridge",
+            colorLevel(25, title: "Police Pair Bridge", subtitle: "Two and two",
                        toy: police, hues: [coral, coral, mint, mint, coral, coral, mint, mint],
-                       blankMask: [F, B, F, F, F, B, F, F], choiceHues: [mint, coral, sun, teal]),
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [coral, mint, sun, teal]),
 
-            colorLevel(26, title: "Wagon ABC", subtitle: "Three colors — two blanks",
+            colorLevel(26, title: "Wagon ABC", subtitle: "Three colors again",
                        toy: wagon, hues: [peri, sun, mint, peri, sun, mint, peri, sun, mint],
-                       blankMask: [F, F, B, F, B, F, F, F, F], choiceHues: [peri, sun, mint, coral],
+                       blankMask: [F, F, F, F, F, F, B, B, B], choiceHues: [peri, sun, mint, coral],
                        columns: 3),
 
-            colorLevel(27, title: "Mirror Lux SUVs", subtitle: "It rolls out, then back",
+            colorLevel(27, title: "Lux Mirror", subtitle: "Out, then back the same way",
                        toy: lux, hues: [teal, coral, sun, peri, peri, sun, coral, teal],
-                       blankMask: [F, F, F, B, B, F, F, F], choiceHues: [coral, teal, mint, sun, peri],
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [coral, teal, sun, peri, mint],
                        columns: 4),
 
-            colorLevel(28, title: "Tanker Repair", subtitle: "Three broken spots",
+            colorLevel(28, title: "Tanker Repair", subtitle: "Keep mint, apricot going",
                        toy: tanker, hues: [mint, apri, mint, apri, mint, apri, mint, apri],
-                       blankMask: [F, B, F, F, B, F, F, B], choiceHues: [mint, apri, coral, sun]),
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [mint, apri, coral, sun]),
 
             colorLevel(29, title: "Festival Compacts", subtitle: "Four colors in the parade",
                        toy: compact, hues: [coral, sun, teal, peri, coral, sun, teal, peri],
-                       blankMask: [F, F, B, F, F, B, F, B], choiceHues: [teal, peri, sun, mint, apri]),
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [teal, peri, sun, mint, apri]),
 
-            colorLevel(30, title: "Rainbow Model T", subtitle: "Every color — find three",
-                       toy: modelT, hues: [coral, apri, sun, mint, teal, peri, coral, apri],
-                       blankMask: [F, F, B, F, B, F, F, B], choiceHues: [mint, teal, sun, peri, coral, apri],
+            colorLevel(30, title: "Model T Quartet", subtitle: "Four colors, then again",
+                       toy: modelT, hues: [coral, apri, sun, mint, coral, apri, sun, mint],
+                       blankMask: [F, F, F, F, F, F, B, B], choiceHues: [sun, mint, peri, coral, apri],
                        columns: 4),
 
             // MARK: World 4 — Toy Missions
-            toyLevel(31, title: "Long Street Walk", subtitle: "Keep the AB rhythm",
+            toyLevel(31, title: "Long Street Walk", subtitle: "City, taxi, again",
                      hue: teal, toys: [city, taxi, city, taxi, city, taxi, city, taxi],
-                     blankMask: [F, F, B, F, F, B, F, F], choiceToys: [city, taxi, bus, wagon]),
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [city, taxi, bus, wagon]),
 
-            toyLevel(32, title: "Skip Rescue", subtitle: "Which vehicle was skipped?",
-                     hue: mint, toys: [fire, police, ambo, fire, police, ambo, fire, police],
-                     blankMask: [F, F, F, F, B, F, F, B], choiceToys: [police, ambo, bus, jeep]),
+            toyLevel(32, title: "Rescue Trio", subtitle: "Fire, police, ambulance…",
+                     hue: mint, toys: [fire, police, ambo, fire, police, ambo, fire, police, ambo],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [fire, police, ambo, bus, jeep],
+                     columns: 3),
 
-            toyLevel(33, title: "Two Work Gaps", subtitle: "Gaps far apart",
+            toyLevel(33, title: "Work Rhythm", subtitle: "Box, tanker, again",
                      hue: coral, toys: [box, tanker, box, tanker, box, tanker, box, tanker],
-                     blankMask: [F, B, F, F, F, B, F, F], choiceToys: [box, tanker, semi, dump]),
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [box, tanker, semi, dump]),
 
-            toyLevel(34, title: "Classic Sandwich", subtitle: "What sits between?",
+            toyLevel(34, title: "Classic Sandwich", subtitle: "Model T, then two Topolinos",
                      hue: sun, toys: [modelT, topolino, topolino, modelT, topolino, topolino, modelT, topolino, topolino],
-                     blankMask: [F, B, F, F, B, F, F, F, B], choiceToys: [topolino, modelT, classic, jeep],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [modelT, topolino, classic, jeep],
                      columns: 3),
 
-            toyLevel(35, title: "Pair Convoy", subtitle: "Two alike — three blanks",
+            toyLevel(35, title: "Pair Convoy", subtitle: "Two semis, two carriers",
                      hue: peri, toys: [semi, semi, carrier, carrier, semi, semi, carrier, carrier],
-                     blankMask: [F, B, F, F, F, B, F, B], choiceToys: [carrier, semi, dump, box]),
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [semi, carrier, dump, box]),
 
-            toyLevel(36, title: "Garage ABC", subtitle: "Three vehicles — two blanks",
+            toyLevel(36, title: "Garage ABC", subtitle: "Loader, bus, kart…",
                      hue: apri, toys: [loader, bus, kart, loader, bus, kart, loader, bus, kart],
-                     blankMask: [F, F, B, F, B, F, F, F, F], choiceToys: [loader, bus, kart, fire, jeep],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [loader, bus, kart, fire, jeep],
                      columns: 3),
 
-            toyLevel(37, title: "Mirror Garage", subtitle: "Out and back — two spots",
+            toyLevel(37, title: "Mirror Garage", subtitle: "Out, then back the same way",
                      hue: mint, toys: [fire, pickup, carrier, lux, lux, carrier, pickup, fire],
-                     blankMask: [F, F, F, B, B, F, F, F], choiceToys: [pickup, fire, jeep, carrier, lux],
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [pickup, fire, carrier, lux, jeep],
                      columns: 4),
 
-            toyLevel(38, title: "Busy Yard", subtitle: "Four vehicles — three blanks",
+            toyLevel(38, title: "Busy Yard", subtitle: "Four vehicles, then again",
                      hue: coral, toys: [bus, fire, jeep, garbage, bus, fire, jeep, garbage],
-                     blankMask: [F, F, B, F, F, B, F, B], choiceToys: [jeep, garbage, fire, tractor, rocket]),
+                     blankMask: [F, F, F, F, F, F, B, B], choiceToys: [jeep, garbage, fire, tractor, rocket]),
 
-            toyLevel(39, title: "Sport Trail", subtitle: "AAB AAB with holes",
+            toyLevel(39, title: "Sport Trail", subtitle: "Two sports, then a coupe",
                      hue: sun, toys: [sportSedan, sportSedan, coupe, sportSedan, sportSedan, coupe, sportSedan, sportSedan, coupe],
-                     blankMask: [F, B, F, F, B, F, F, F, B], choiceToys: [sportSedan, coupe, hatch, race],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [sportSedan, coupe, hatch, race],
                      columns: 3),
 
-            toyLevel(40, title: "Broken Convoy", subtitle: "Four repairs in the yard",
+            toyLevel(40, title: "Broken Convoy", subtitle: "Dump, delivery, ambulance…",
                      hue: teal, toys: [dump, delivery, ambo, dump, delivery, ambo, dump, delivery, ambo],
-                     blankMask: [F, B, F, F, B, F, F, B, B], choiceToys: [dump, delivery, ambo, fire, police],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [dump, delivery, ambo, fire, police],
                      columns: 3),
 
             // MARK: World 5 — Super Garage
-            colorLevel(41, title: "Mega Kart Bridge", subtitle: "ABC — park three",
+            colorLevel(41, title: "Mega Kart Bridge", subtitle: "Three colors, park three",
                        toy: kart, hues: [coral, teal, sun, coral, teal, sun, coral, teal, sun],
-                       blankMask: [F, F, B, F, B, F, F, F, B], choiceHues: [coral, teal, sun, mint, peri],
+                       blankMask: [F, F, F, F, F, F, B, B, B], choiceHues: [coral, teal, sun, mint, peri],
                        columns: 3),
 
-            toyLevel(42, title: "Mega Fleet Bridge", subtitle: "ABC — park three",
+            toyLevel(42, title: "Mega Fleet Bridge", subtitle: "Bus, fire, Model T…",
                      hue: peri, toys: [bus, fire, modelT, bus, fire, modelT, bus, fire, modelT],
-                     blankMask: [F, B, F, F, F, B, F, B, F], choiceToys: [bus, fire, modelT, jeep, ambo],
+                     blankMask: [F, F, F, F, F, F, B, B, B], choiceToys: [bus, fire, modelT, jeep, ambo],
                      columns: 3),
 
-            colorLevel(43, title: "Pickup Chorus", subtitle: "Every other color",
+            colorLevel(43, title: "Pickup Chorus", subtitle: "Mint, peri — keep going",
                        toy: pickup, hues: [mint, peri, mint, peri, mint, peri, mint, peri, mint, peri, mint, peri],
-                       blankMask: [F, B, F, B, F, B, F, F, F, B, F, F], choiceHues: [peri, mint, coral, sun],
+                       blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceHues: [mint, peri, coral, sun],
                        columns: 4),
 
-            toyLevel(44, title: "Rescue Chorus", subtitle: "Every other vehicle",
+            toyLevel(44, title: "Rescue Chorus", subtitle: "Fire, police, ambulance…",
                      hue: sun, toys: [fire, police, ambo, fire, police, ambo, fire, police, ambo, fire, police, ambo],
-                     blankMask: [F, B, F, F, B, F, F, B, F, F, B, F], choiceToys: [police, fire, ambo, dump, bus],
+                     blankMask: [F, F, F, F, F, F, F, F, F, B, B, B], choiceToys: [fire, police, ambo, dump, bus],
                      columns: 4),
 
-            colorLevel(45, title: "Bus Pulse", subtitle: "Pairs — four blanks",
+            colorLevel(45, title: "Bus Pulse", subtitle: "Two coral, two teal",
                        toy: bus, hues: [coral, coral, teal, teal, coral, coral, teal, teal, coral, coral, teal, teal],
-                       blankMask: [F, B, F, F, F, B, F, B, F, F, F, B], choiceHues: [coral, teal, sun, mint],
+                       blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceHues: [coral, teal, sun, mint],
                        columns: 4),
 
-            toyLevel(46, title: "Work Pulse", subtitle: "Pairs — four blanks",
+            toyLevel(46, title: "Work Pulse", subtitle: "Two semis, two tankers",
                      hue: mint, toys: [semi, semi, tanker, tanker, semi, semi, tanker, tanker, semi, semi, tanker, tanker],
-                     blankMask: [F, F, F, B, F, B, F, F, F, B, F, B], choiceToys: [semi, tanker, box, dump],
+                     blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceToys: [semi, tanker, box, dump],
                      columns: 4),
 
-            colorLevel(47, title: "Topolino Ribbon", subtitle: "Four colors — three gaps",
+            colorLevel(47, title: "Topolino Ribbon", subtitle: "Four colors in order",
                        toy: topolino, hues: [coral, mint, peri, sun, coral, mint, peri, sun, coral, mint, peri, sun],
-                       blankMask: [F, F, B, F, F, B, F, F, F, F, B, F], choiceHues: [peri, sun, mint, apri, teal],
+                       blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceHues: [coral, mint, peri, sun, teal],
                        columns: 4),
 
-            toyLevel(48, title: "Yard Ribbon", subtitle: "Four vehicles — three gaps",
+            toyLevel(48, title: "Yard Ribbon", subtitle: "Bus, jeep, dump, tractor…",
                      hue: apri, toys: [bus, jeep, dump, tractor, bus, jeep, dump, tractor, bus, jeep, dump, tractor],
-                     blankMask: [F, B, F, F, F, F, B, F, F, B, F, F], choiceToys: [dump, tractor, jeep, police, rocket],
+                     blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceToys: [bus, jeep, dump, tractor, rocket],
                      columns: 4),
 
-            colorLevel(49, title: "Crown Classics", subtitle: "Six colors — four parks",
-                       toy: classic, hues: [coral, apri, sun, mint, teal, peri, coral, apri, sun, mint, teal, peri],
-                       blankMask: [F, F, B, F, B, F, F, B, F, F, B, F], choiceHues: [mint, teal, peri, sun, apri, coral],
+            colorLevel(49, title: "Crown Classics", subtitle: "Four colors — finish the round",
+                       toy: classic, hues: [coral, apri, sun, mint, coral, apri, sun, mint, coral, apri, sun, mint],
+                       blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceHues: [coral, apri, sun, mint, peri, teal],
                        columns: 4),
 
-            toyLevel(50, title: "Crown Finale", subtitle: "The whole garage — four parks",
-                     hue: mint, toys: [modelT, bus, fire, jeep, dump, semi, tractor, rocket, taxi, lux, ambo, topolino],
-                     blankMask: [F, F, B, F, F, B, F, F, F, B, F, B], choiceToys: [fire, semi, lux, topolino, dump, tractor, jeep],
+            toyLevel(50, title: "Crown Finale", subtitle: "Four vehicles — finish the round",
+                     hue: mint, toys: [modelT, bus, fire, jeep, modelT, bus, fire, jeep, modelT, bus, fire, jeep],
+                     blankMask: [F, F, F, F, F, F, F, F, B, B, B, B], choiceToys: [modelT, bus, fire, jeep, dump, tractor, rocket],
                      columns: 4)
         ]
     }
