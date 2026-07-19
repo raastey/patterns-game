@@ -10,8 +10,8 @@
 		0EDE02316014AC0B0B0188AB /* check.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 3488410DF586D9B259A6DA74 /* check.mp3 */; };
 		1030E7B9D459EC1ACEA92B71 /* ScrollViewIfNeeded.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9355BE8B5EB8893F7A5A2725 /* ScrollViewIfNeeded.swift */; };
 		118319081337AD354D554D9A /* PatternPathApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 88E05869710C4719AD62BE1A /* PatternPathApp.swift */; };
-		12A8E0C1B4F74D2E9C6D1A03 /* AppLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2E9F41A0C84D6B8E1F3C55 /* AppLegal.swift */; };
 		13C4FC1AE6EF114AB75A752C /* SoundPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 194186045D1689D11D8C7935 /* SoundPlayer.swift */; };
+		145C3CFAD29F28BE7DEF0B57 /* AppLegal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42547182ED5E9A63410862BC /* AppLegal.swift */; };
 		16AB19619948B2CC348823FE /* WorldTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63E19CD1E47D24C3497341B1 /* WorldTheme.swift */; };
 		18B9D788E965FCAC739219A8 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 5D1D8F6D14704566A5E058CF /* PrivacyInfo.xcprivacy */; };
 		1F6116FA42ECB4EA1CC60B5B /* undo.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = 2BEA7E29926B813BCD8D8B44 /* undo.mp3 */; };
@@ -80,6 +80,7 @@
 		3C3A34235CAE34A91D74486C /* AppTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTheme.swift; sourceTree = "<group>"; };
 		3D82F16D5C4A5010C9396CE5 /* ProgressStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressStore.swift; sourceTree = "<group>"; };
 		3FCD93C05AC397549A2D8DE1 /* select.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = select.mp3; sourceTree = "<group>"; };
+		42547182ED5E9A63410862BC /* AppLegal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLegal.swift; sourceTree = "<group>"; };
 		4635830617E38545253B77D7 /* GameSessionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameSessionTests.swift; sourceTree = "<group>"; };
 		49CC4CF0D246756C4FF302E4 /* notification.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; path = notification.mp3; sourceTree = "<group>"; };
 		4ACE6560190060D28E2DCEEA /* ToyArt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ToyArt.swift; sourceTree = "<group>"; };
@@ -94,7 +95,6 @@
 		75E93B1586904100B44AA50F /* StickerCollection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StickerCollection.swift; sourceTree = "<group>"; };
 		845EAC39062E6DF27B74C228 /* AdaptiveLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AdaptiveLayout.swift; sourceTree = "<group>"; };
 		87B5AB34124CAFF68E12D88C /* PlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayView.swift; sourceTree = "<group>"; };
-		7B2E9F41A0C84D6B8E1F3C55 /* AppLegal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLegal.swift; sourceTree = "<group>"; };
 		88E05869710C4719AD62BE1A /* PatternPathApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PatternPathApp.swift; sourceTree = "<group>"; };
 		8ACF92CBC11A037514BB374F /* CoachOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoachOverlay.swift; sourceTree = "<group>"; };
 		8B74CAD2C2D980748AC5A4B2 /* LevelLogicTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LevelLogicTests.swift; sourceTree = "<group>"; };
@@ -155,7 +155,7 @@
 		281786FBC8B8FA466FD5176D /* App */ = {
 			isa = PBXGroup;
 			children = (
-				7B2E9F41A0C84D6B8E1F3C55 /* AppLegal.swift */,
+				42547182ED5E9A63410862BC /* AppLegal.swift */,
 				88E05869710C4719AD62BE1A /* PatternPathApp.swift */,
 				1B50E5CF3877B75B79D9DA49 /* RootView.swift */,
 			);
@@ -371,7 +371,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				31C59D73664267B319A84B3F /* AdaptiveLayout.swift in Sources */,
-				12A8E0C1B4F74D2E9C6D1A03 /* AppLegal.swift in Sources */,
+				145C3CFAD29F28BE7DEF0B57 /* AppLegal.swift in Sources */,
 				FD7C3D299BB491BA42A0CFBA /* AppSettings.swift in Sources */,
 				248B8C6DE63C0BE85487B034 /* AppTheme.swift in Sources */,
 				A99C6BC35DC99E10232F9809 /* CelebrationView.swift in Sources */,
@@ -469,7 +469,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = P3UCBA6NAQ;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -557,7 +557,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = P3UCBA6NAQ;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Push Pattern Path / The Pattern Game App Store Connect metadata via API. Does not submit for review."""
+"""Push Pattern Path (The Pattern Game) App Store Connect metadata via API. Does not submit for review."""
 from __future__ import annotations
 
 import importlib.util
@@ -15,8 +15,9 @@ ROOT = Path(__file__).resolve().parents[1]
 BUNDLE_ID = "fun.raastey.patternpath"
 LOCALE = "en-US"
 REVIEW_CONTACT_PHONE = "+19176050642"
-CONTENT_RIGHTS_DECLARATION = "USES_THIRD_PARTY_CONTENT"
+CONTENT_RIGHTS_DECLARATION = "DOES_NOT_USE_THIRD_PARTY_CONTENT"
 PRIMARY_CATEGORY_ID = "EDUCATION"
+SECONDARY_CATEGORY_ID = "GAMES"
 TARGET_PRICE = "1.99"
 BASE_TERRITORY = "USA"
 
@@ -56,7 +57,7 @@ APPLE_PRODUCT_TERMS = (
     "control center",
 )
 STORE_VERSION = "1.0.0"
-LATEST_BUILD_NUMBER = "1"
+LATEST_BUILD_NUMBER = "2"
 RELEASE_TYPE = "MANUAL"
 
 AGE_RATING_ATTRIBUTES = {
@@ -267,6 +268,15 @@ def main() -> int:
         app_info_id = infos["data"][0]["id"]
 
     if app_info_id:
+        relationships = {
+            "primaryCategory": {
+                "data": {"type": "appCategories", "id": PRIMARY_CATEGORY_ID}
+            }
+        }
+        if SECONDARY_CATEGORY_ID:
+            relationships["secondaryCategory"] = {
+                "data": {"type": "appCategories", "id": SECONDARY_CATEGORY_ID}
+            }
         code, cat_patch = client.request(
             "PATCH",
             f"https://api.appstoreconnect.apple.com/v1/appInfos/{app_info_id}",
@@ -274,15 +284,11 @@ def main() -> int:
                 "data": {
                     "type": "appInfos",
                     "id": app_info_id,
-                    "relationships": {
-                        "primaryCategory": {
-                            "data": {"type": "appCategories", "id": PRIMARY_CATEGORY_ID}
-                        }
-                    },
+                    "relationships": relationships,
                 }
             },
         )
-        print(f"primaryCategory PATCH: {code}", "OK" if code == 200 else json.dumps(cat_patch, indent=2))
+        print(f"category PATCH: {code}", "OK" if code == 200 else json.dumps(cat_patch, indent=2))
 
         code, info_locs = client.request(
             "GET",
