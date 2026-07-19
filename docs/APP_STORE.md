@@ -1,6 +1,17 @@
 # Pattern Path — App Store handoff
 
-Engineering for **v1.0.0** is closed. Human UAT, screenshots, and App Store Connect are yours.
+Engineering for **v1.0.0** is closed. Binary is on TestFlight.
+
+| Item | Status |
+|------|--------|
+| App Store Connect app | `6792539628` (listed as “The Pattern Game”) |
+| Bundle ID | `fun.raastey.patternpath` |
+| Build | `1.0.0 (1)` · VALID · Delivery `ff1da3b8-7437-4403-9dba-baab0364a443` |
+| TestFlight | Internal · `READY_FOR_BETA_TESTING` |
+| Price | **$1.99** (USA base; schedule set) |
+| App icon | Present on build (Apps list uses processed build icon) |
+| TestFlight | https://appstoreconnect.apple.com/apps/6792539628/testflight/ios |
+| App Store | https://appstoreconnect.apple.com/apps/6792539628/appstore |
 
 ## Binary
 
