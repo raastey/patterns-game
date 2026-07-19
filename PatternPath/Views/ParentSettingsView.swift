@@ -68,6 +68,16 @@ struct ParentSettingsView: View {
                                 Text("Ages 5+ · Level 1 autism-friendly design")
                                     .font(.bodyRounded(14, weight: .medium))
                                     .foregroundStyle(AppTheme.inkFaint)
+                                Text("Published by SixTwelve Studio")
+                                    .font(.bodyRounded(14, weight: .medium))
+                                    .foregroundStyle(AppTheme.inkFaint)
+
+                                Link("Privacy Policy", destination: AppLegal.privacyPolicyURL)
+                                    .font(.bodyRounded(15, weight: .semibold))
+                                Link("Support", destination: AppLegal.supportURL)
+                                    .font(.bodyRounded(15, weight: .semibold))
+                                Link("Terms of Use", destination: AppLegal.termsURL)
+                                    .font(.bodyRounded(15, weight: .semibold))
                             }
                         }
                         .padding(.horizontal, layout.horizontalPadding)
